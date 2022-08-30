@@ -1,0 +1,17 @@
+DateTime: 2022-08-30 13:54:18.259289 | Address: C:\repo\captainpassword\build\web/
+DateTime: 2022-08-30 13:54:22.780483 | Address: C:\repo\captainpassword\build\web/flutter_service_worker.js?v=4156540205
+DateTime: 2022-08-30 13:54:57.392827 | Address: C:\repo\captainpassword\build\web/
+DateTime: 2022-08-30 13:54:57.793355 | Address: C:\repo\captainpassword\build\web/main.dart.js
+DateTime: 2022-08-30 13:54:59.142270 | Address: C:\repo\captainpassword\build\web/icons/Icon-192.png
+DateTime: 2022-08-30 13:54:59.144270 | Address: C:\repo\captainpassword\build\web/favicon.png
+DateTime: 2022-08-30 13:55:01.246663 | Address: C:\repo\captainpassword\build\web/assets/FontManifest.json
+DateTime: 2022-08-30 13:55:01.303629 | Address: C:\repo\captainpassword\build\web/assets/fonts/MaterialIcons-Regular.otf
+DateTime: 2022-08-30 13:55:01.322620 | Address: C:\repo\captainpassword\build\web/assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+DateTime: 2022-08-30 13:55:02.303052 | Address: C:\repo\captainpassword\build\web/assets/packages/fluttertoast/assets/toastify.css
+DateTime: 2022-08-30 13:55:02.310058 | Address: C:\repo\captainpassword\build\web/assets/packages/fluttertoast/assets/toastify.js
+DateTime: 2022-08-30 13:55:03.861298 | Address: C:\repo\captainpassword\build\web/flutter_service_worker.js?v=4156540205
+DateTime: 2022-08-30 13:55:04.191319 | Address: C:\repo\captainpassword\build\web/main.dart.js
+DateTime: 2022-08-30 13:55:04.194315 | Address: C:\repo\captainpassword\build\web/index.html
+DateTime: 2022-08-30 13:55:04.204307 | Address: C:\repo\captainpassword\build\web/assets/NOTICES
+DateTime: 2022-08-30 13:55:04.212315 | Address: C:\repo\captainpassword\build\web/assets/AssetManifest.json
+DateTime: 2022-08-30 13:55:04.220371 | Address: C:\repo\captainpassword\build\web/assets/FontManifest.json
