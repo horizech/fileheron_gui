@@ -107,12 +107,12 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Container(
+            child: SizedBox(
               // color: Colors.blue,
               width: 500,
               // height: 1000,
-              decoration:
-                  BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+              // decoration:
+              // BoxDecoration(border: Border.all(color: Colors.blueAccent)),
               child: Form(
                 key: _formKey,
                 child: Padding(
@@ -333,7 +333,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.only(left: 8.0),
-                                  child: Text("CertificateChain file: "),
+                                  child: Text("Certificate Chain file: "),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -374,7 +374,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.only(left: 8.0),
-                                  child: Text("ServerKey file: "),
+                                  child: Text("Server Key file: "),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -460,16 +460,46 @@ class _HomePageState extends State<HomePage> {
                           child: SizedBox(
                               height: 40,
                               child: isStart == false
-                                  ? ElevatedButton(
-                                      onPressed: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          onStart();
+                                  ? SizedBox(
+                                      width: 100,
+                                      height: 40,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            onStart();
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: const Text('Service'),
+                                                content: Text(
+                                                    "Service started at http://${hostController.text}:${portController.text}"),
+                                                actions: [
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text('Ok'))
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: const Text('Start'),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 100,
+                                      height: 40,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          onStop();
                                           showDialog(
                                             context: context,
                                             builder: (context) => AlertDialog(
                                               title: const Text('Service'),
-                                              content: Text(
-                                                  "Service started at http://${hostController.text}:${portController.text}"),
+                                              content:
+                                                  const Text("Service Stoped"),
                                               actions: [
                                                 ElevatedButton(
                                                     onPressed: () {
@@ -479,30 +509,9 @@ class _HomePageState extends State<HomePage> {
                                               ],
                                             ),
                                           );
-                                        }
-                                      },
-                                      child: const Text('Start'),
-                                    )
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        onStop();
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: const Text('Service'),
-                                            content:
-                                                const Text("Service Stoped"),
-                                            actions: [
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Ok'))
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('Stop'),
+                                        },
+                                        child: const Text('Stop'),
+                                      ),
                                     )),
                         ),
                       ),
