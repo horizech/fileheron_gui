@@ -1,11 +1,27 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_server/fileheron_server.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-// import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter_up/enums/up_text_direction.dart';
+import 'package:flutter_up/themes/up_theme_collection.dart';
+
+import 'package:flutter_up/widgets/up_button.dart';
+import 'package:flutter_up/widgets/up_checkbox.dart';
+import 'package:flutter_up/widgets/up_textfield.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
+  doWhenWindowReady(() {
+    var initialSize = const Size(800, 600);
+    appWindow.size = initialSize;
+    appWindow.minSize = initialSize;
+    appWindow.alignment = Alignment.center;
+    appWindow.title = "FileHeron";
+    appWindow.show();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -13,24 +29,141 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FileHeron',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return DynamicTheme(
+        themeCollection: upThemeCollection,
+        defaultThemeId: UpThemes.lightRed,
+        builder: (context, theme) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'FileHeron',
+            theme: theme,
+            home: const HomePage(),
+          );
+        });
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: WindowBorder(
+        width: 1,
+        color: Colors.black,
+        child: Row(children: const [
+          LeftSide(),
+          Expanded(
+            child: RightSide(),
+          ),
+        ]),
       ),
-      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class LeftSide extends StatelessWidget {
+  const LeftSide({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 200,
+      child: Container(
+        color: Theme.of(context).primaryColor,
+        child: Column(
+          children: [
+            WindowTitleBarBox(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: MoveWindow(),
+                  ),
+                  const Text(
+                    "FileHeron",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: MoveWindow(),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              thickness: 1,
+              color: Colors.white,
+            ),
+            Column(
+              children: [
+                Row(
+                  children: const [
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                        child: Text(
+                          "Server",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                      child: Text(
+                        "Local Server",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
+class WindowButtons extends StatelessWidget {
+  const WindowButtons({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        MinimizeWindowButton(),
+        // MaximizeWindowButton(),
+        CloseWindowButton()
+      ],
+    );
+  }
+}
+
+class RightSide extends StatefulWidget {
+  const RightSide({Key? key}) : super(key: key);
+
+  @override
+  State<RightSide> createState() => _RightSideState();
+}
+
+class _RightSideState extends State<RightSide> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController hostController =
       TextEditingController(text: "localhost");
@@ -46,8 +179,14 @@ class _HomePageState extends State<HomePage> {
   FilePickerResult? certificateChain;
   FilePickerResult? serverKey;
   bool isStart = false;
+  bool isDisable = false;
 
   FileHeronServer? server;
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw 'Could not launch $url';
+    }
+  }
 
   onStart() {
     ServerParams params = ServerParams(
@@ -98,428 +237,492 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("FileHeron Server"),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.orange, Colors.yellow],
+          stops: [0.0, 0.1],
+        ),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              // color: Colors.blue,
-              width: 500,
-              // height: 1000,
-              // decoration:
-              // BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-              child: Form(
-                key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 30.0, bottom: 30.0, left: 15.0, right: 15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text("Host: "),
-                      ),
-                      SizedBox(
-                        height: 60,
-                        child: Padding(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Theme.of(context).colorScheme.secondary,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              WindowTitleBarBox(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: MoveWindow(),
+                    ),
+                    const WindowButtons(),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: 500,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text("Host: "),
+                        ),
+                        Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: hostController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(2)),
-                                borderSide: BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.solid,
+                          child: SizedBox(
+                            height: 60,
+                            child: UpTextField(
+                              readOnly: isDisable,
+                              keyboardType: TextInputType.text,
+                              controller: hostController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(2)),
+                                  borderSide: BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.solid,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(2)),
+                                  borderSide: BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.solid,
+                                  ),
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(2)),
-                                borderSide: BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.solid,
-                                ),
-                              ),
+                              // initialValue: "localhost",
+                              // onChanged: (value) => {host = value},
+                              lable: "host",
                             ),
-                            // initialValue: "localhost",
-                            // onChanged: (value) => {host = value},
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter Host';
-                              }
-                              return null;
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text("Port: "),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 60,
+                            child: UpTextField(
+                                readOnly: isDisable,
+                                keyboardType: TextInputType.number,
+                                controller: portController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(2)),
+                                    borderSide: BorderSide(
+                                      width: 0,
+                                      style: BorderStyle.solid,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(2)),
+                                    borderSide: BorderSide(
+                                      width: 0,
+                                      style: BorderStyle.solid,
+                                    ),
+                                  ),
+                                ),
+                                // initialValue: "8080",
+                                // onChanged: (value) => {port = int.parse(value)},
+                                lable: "valid port"),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text("Root: "),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child:
+                                    styledTextFiled(rootController, isDisable),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                height: 40,
+                                child: UpButton(
+                                    isButtonDisable: isDisable,
+                                    isRounded: true,
+                                    roundedBorderRadius: 5,
+                                    onPress: () {},
+                                    child: const Text(" Select ")),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Wrap(
+                            runAlignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              // const Text("listDir : "),
+                              UpCheckbox(
+                                  isDisable: isDisable,
+                                  activeColor: Theme.of(context).primaryColor,
+                                  checkColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  isRounded: true,
+                                  roundedBorderRadius: 5,
+                                  borderWidth: 1.5,
+                                  borderColor: Theme.of(context).primaryColor,
+                                  value: isListDir,
+                                  lable: "Show requests in console?",
+                                  // lableDirection: TextDirection.ltr,
+                                  lableDirection: UpTextDirection.left,
+                                  onChange: (bool? newcheck) {
+                                    setState(
+                                      () {
+                                        isListDir = newcheck ?? false;
+                                      },
+                                    );
+                                  }),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(" "),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: UpCheckbox(
+                            activeColor: Theme.of(context).primaryColor,
+                            checkColor: Theme.of(context).colorScheme.secondary,
+                            isRounded: true,
+                            roundedBorderRadius: 5,
+                            borderWidth: 1.5,
+                            borderColor: Theme.of(context).primaryColor,
+                            lable: "Enable SSL?",
+                            lableDirection: UpTextDirection.left,
+                            value: isSsl,
+                            isDisable: isDisable,
+                            onChange: (bool? newcheck) {
+                              setState(
+                                () {
+                                  isSsl = newcheck ?? false;
+                                },
+                              );
                             },
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text("Port: "),
-                      ),
-                      SizedBox(
-                        height: 60,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            controller: portController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(2)),
-                                borderSide: BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.solid,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(2)),
-                                borderSide: BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.solid,
-                                ),
-                              ),
-                            ),
-                            // initialValue: "8080",
-                            // onChanged: (value) => {port = int.parse(value)},
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter valid port';
-                              }
-                              return null;
-                            },
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text("Root: "),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: styledTextFiled(rootController),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              height: 40,
-                              child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: const Text(" Select ")),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Wrap(
-                          runAlignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            const Text("listDir : "),
-                            Checkbox(
-                                activeColor: Colors.black,
-                                checkColor: Colors.blue,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                side: const BorderSide(
-                                  width: 1.5,
-                                  color: Colors.black,
-                                ),
-                                value: isListDir,
-                                onChanged: (bool? newcheck) {
-                                  setState(
-                                    () {
-                                      isListDir = newcheck ?? false;
-                                    },
-                                  );
-                                }),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 8.0),
-                              child: Text("SSl : "),
-                            ),
-                            Checkbox(
-                                activeColor: Colors.black,
-                                checkColor: Colors.blue,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                side: const BorderSide(
-                                  width: 1.5,
-                                  color: Colors.black,
-                                ),
-                                value: isSsl,
-                                onChanged: (bool? newcheck) {
-                                  setState(
-                                    () {
-                                      isSsl = newcheck ?? false;
-                                    },
-                                  );
-                                }),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      isSsl
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text("Log File: "),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child:
-                                            styledTextFiled(logFileController),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 40,
-                                        child: ElevatedButton(
-                                            onPressed: () async {
-                                              FilePickerResult? result =
-                                                  await FilePicker.platform
-                                                      .pickFiles(
-                                                allowMultiple: false,
-                                                // type: FileType.custom,
-                                                // allowedExtensions: ['jpg', 'pdf', 'doc'],
-                                              );
-                                              if (result != null) {
-                                                setState(() {
-                                                  logfile = result;
-                                                  logFileController.text =
-                                                      logfile!.names.first ??
-                                                          "";
-                                                });
-                                              }
-                                            },
-                                            child: const Text("Browse")),
-                                      ),
-                                    ],
+                        isSsl
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Text("Log File: "),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text("Certificate Chain file: "),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          child: styledTextFiled(
-                                              certificateChainController)),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 40,
-                                        child: ElevatedButton(
-                                            onPressed: () async {
-                                              FilePickerResult? result =
-                                                  await FilePicker.platform
-                                                      .pickFiles(
-                                                allowMultiple: false,
-                                              );
-                                              if (result != null) {
-                                                setState(() {
-                                                  certificateChain = result;
-                                                  certificateChainController
-                                                      .text = certificateChain!
-                                                          .names.first ??
-                                                      "";
-                                                });
-                                              }
-                                            },
-                                            child: const Text("Browse")),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text("Server Key file: "),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: styledTextFiled(
-                                            serverKeyController),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 40,
-                                        child: ElevatedButton(
-                                            onPressed: () async {
-                                              FilePickerResult? result =
-                                                  await FilePicker.platform
-                                                      .pickFiles(
-                                                allowMultiple: false,
-                                              );
-                                              if (result != null) {
-                                                // File file = File(serverKey!.files.single.path ?? "");
-                                                //  Uint8List fileBytes = serverKey.files.first.bytes;
-                                                setState(() {
-                                                  serverKey = result;
-                                                  serverKeyController.text =
-                                                      serverKey!.names.first ??
-                                                          "";
-                                                });
-                                              }
-                                            },
-                                            child: const Text("Browse")),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text("Server Key Password: "),
-                                ),
-                                SizedBox(
-                                  height: 60,
-                                  child: Padding(
+                                  Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.text,
-                                      obscureText: true,
-                                      controller: passwordController,
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(2)),
-                                          borderSide: BorderSide(
-                                            width: 0,
-                                            style: BorderStyle.solid,
-                                          ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: styledTextFiled(
+                                              logFileController, isDisable),
                                         ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(2)),
-                                          borderSide: BorderSide(
-                                            width: 0,
-                                            style: BorderStyle.solid,
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        SizedBox(
+                                          height: 40,
+                                          child: UpButton(
+                                              isButtonDisable: isDisable,
+                                              isRounded: true,
+                                              roundedBorderRadius: 5,
+                                              onPress: () async {
+                                                FilePickerResult? result =
+                                                    await FilePicker.platform
+                                                        .pickFiles(
+                                                  allowMultiple: false,
+                                                  // type: FileType.up,
+                                                  // allowedExtensions: ['jpg', 'pdf', 'doc'],
+                                                );
+                                                if (result != null) {
+                                                  setState(() {
+                                                    logfile = result;
+                                                    logFileController.text =
+                                                        logfile!.names.first ??
+                                                            "";
+                                                  });
+                                                }
+                                              },
+                                              child: const Text("Browse")),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Text("Certificate Chain file: "),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: styledTextFiled(
+                                                certificateChainController,
+                                                isDisable)),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        SizedBox(
+                                          height: 40,
+                                          child: UpButton(
+                                              isButtonDisable: isDisable,
+                                              isRounded: true,
+                                              roundedBorderRadius: 5,
+                                              onPress: () async {
+                                                FilePickerResult? result =
+                                                    await FilePicker.platform
+                                                        .pickFiles(
+                                                  allowMultiple: false,
+                                                );
+                                                if (result != null) {
+                                                  setState(() {
+                                                    certificateChain = result;
+                                                    certificateChainController
+                                                            .text =
+                                                        certificateChain!
+                                                                .names.first ??
+                                                            "";
+                                                  });
+                                                }
+                                              },
+                                              child: const Text("Browse")),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Text("Server Key file: "),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: styledTextFiled(
+                                              serverKeyController, isDisable),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        SizedBox(
+                                          height: 40,
+                                          child: UpButton(
+                                              isButtonDisable: isDisable,
+                                              isRounded: true,
+                                              roundedBorderRadius: 5,
+                                              onPress: () async {
+                                                FilePickerResult? result =
+                                                    await FilePicker.platform
+                                                        .pickFiles(
+                                                  allowMultiple: false,
+                                                );
+                                                if (result != null) {
+                                                  // File file = File(serverKey!.files.single.path ?? "");
+                                                  //  Uint8List fileBytes = serverKey.files.first.bytes;
+                                                  setState(() {
+                                                    serverKey = result;
+                                                    serverKeyController.text =
+                                                        serverKey!
+                                                                .names.first ??
+                                                            "";
+                                                  });
+                                                }
+                                              },
+                                              child: const Text("Browse")),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Text("Server Key Password: "),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      height: 60,
+                                      child: UpTextField(
+                                        readOnly: isDisable,
+                                        keyboardType: TextInputType.text,
+                                        obscureText: true,
+                                        controller: passwordController,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(2)),
+                                            borderSide: BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.solid,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(2)),
+                                            borderSide: BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.solid,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : const Text(""),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: SizedBox(
-                              height: 40,
-                              child: isStart == false
-                                  ? SizedBox(
-                                      width: 100,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            onStart();
+                                ],
+                              )
+                            : const Text(""),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: SizedBox(
+                                height: 40,
+                                child: isStart == false
+                                    ? SizedBox(
+                                        width: 100,
+                                        height: 40,
+                                        child: UpButton(
+                                          isButtonDisable: isDisable,
+                                          isRounded: true,
+                                          roundedBorderRadius: 5,
+                                          onPress: () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              onStart();
+                                              setState(() {
+                                                isDisable = true;
+                                              });
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                  title: const Text('Service'),
+                                                  content: Row(
+                                                    children: [
+                                                      const Text(
+                                                          "Service started at "),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          _launchUrl(
+                                                              "http://${hostController.text}:${portController.text}");
+                                                        },
+                                                        child: Text(
+                                                          "http://${hostController.text}:${portController.text}",
+                                                          style: const TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    UpButton(
+                                                        isRounded: true,
+                                                        roundedBorderRadius: 5,
+                                                        onPress: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text('Ok'))
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: const Text('Start'),
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        width: 100,
+                                        height: 40,
+                                        child: UpButton(
+                                          isRounded: true,
+                                          roundedBorderRadius: 5,
+                                          onPress: () {
+                                            onStop();
+                                            setState(() {
+                                              isDisable = false;
+                                            });
                                             showDialog(
                                               context: context,
                                               builder: (context) => AlertDialog(
                                                 title: const Text('Service'),
-                                                content: Text(
-                                                    "Service started at http://${hostController.text}:${portController.text}"),
+                                                content: const Text(
+                                                    "Service Stoped"),
                                                 actions: [
-                                                  ElevatedButton(
-                                                      onPressed: () {
+                                                  UpButton(
+                                                      isRounded: true,
+                                                      roundedBorderRadius: 5,
+                                                      onPress: () {
                                                         Navigator.pop(context);
                                                       },
                                                       child: const Text('Ok'))
                                                 ],
                                               ),
                                             );
-                                          }
-                                        },
-                                        child: const Text('Start'),
-                                      ),
-                                    )
-                                  : SizedBox(
-                                      width: 100,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          onStop();
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: const Text('Service'),
-                                              content:
-                                                  const Text("Service Stoped"),
-                                              actions: [
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Ok'))
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        child: const Text('Stop'),
-                                      ),
-                                    )),
+                                          },
+                                          child: const Text('Stop'),
+                                        ),
+                                      )),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -527,10 +730,11 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget styledTextFiled(TextEditingController controller) {
+Widget styledTextFiled(TextEditingController controller, bool isDisable) {
   return SizedBox(
     height: 50,
-    child: TextFormField(
+    child: UpTextField(
+      readOnly: isDisable,
       keyboardType: TextInputType.text,
       controller: controller,
       decoration: const InputDecoration(
