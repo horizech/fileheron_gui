@@ -37,8 +37,7 @@ dependencies:
   fileheron_server: ^1.0.4
   url_launcher: ^6.0.2
   dynamic_themes: ^1.1.0
-  flutter_up:
-    path: ../flutter_up
+  flutter_up: ^0.1.0
   bitsdojo_window: ^0.1.5
 
 dev_dependencies:
