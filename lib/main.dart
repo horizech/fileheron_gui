@@ -175,6 +175,7 @@ class _RightSideState extends State<RightSide> {
   TextEditingController serverKeyController = TextEditingController();
   bool isListDir = true;
   bool isSsl = false;
+  String? rootfile;
   FilePickerResult? logfile;
   FilePickerResult? certificateChain;
   FilePickerResult? serverKey;
@@ -201,7 +202,11 @@ class _RightSideState extends State<RightSide> {
           : logFileController.text.isNotEmpty
               ? logFileController.text
               : kDefaultLogFile,
-      root: rootController.text.isNotEmpty ? rootController.text : kDefaultRoot,
+      root: rootfile != null && rootfile!.isNotEmpty
+          ? rootfile!
+          : rootController.text.isNotEmpty
+              ? rootController.text
+              : kDefaultRoot,
       certificateChain: certificateChain != null
           ? certificateChain!.files.first.path
           : certificateChainController.text.isNotEmpty
@@ -371,7 +376,20 @@ class _RightSideState extends State<RightSide> {
                                     isButtonDisable: isDisable,
                                     isRounded: true,
                                     roundedBorderRadius: 5,
-                                    onPress: () {},
+                                    onPress: () async {
+                                      String? result = await FilePicker.platform
+                                          .getDirectoryPath(
+                                              // allowMultiple: false,
+                                              // type: FileType.up,
+                                              // allowedExtensions: ['jpg', 'pdf', 'doc'],
+                                              );
+                                      if (result != null && result.isNotEmpty) {
+                                        setState(() {
+                                          rootfile = result;
+                                          rootController.text = result;
+                                        });
+                                      }
+                                    },
                                     child: const Text(" Select ")),
                               ),
                             ],
