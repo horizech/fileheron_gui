@@ -107,7 +107,7 @@ packages:
     source: hosted
     version: "1.0.5"
   dynamic_themes:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: dynamic_themes
       url: "https://pub.dartlang.org"
@@ -189,10 +189,10 @@ packages:
   flutter_up:
     dependency: "direct main"
     description:
-      name: flutter_up
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
+      path: "../flutter_up"
+      relative: true
+    source: path
+    version: "0.2.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

@@ -1,10 +1,11 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:fileheron_gui/constants.dart';
+import 'package:fileheron_gui/locator.dart';
 import 'package:fileheron_server/fileheron_server.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_up/enums/up_text_direction.dart';
+import 'package:flutter_up/flutter_up_app.dart';
 import 'package:flutter_up/themes/up_theme_collection.dart';
 
 import 'package:flutter_up/widgets/up_button.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_up/widgets/up_textfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
+  setupLocator();
   runApp(const MyApp());
   doWhenWindowReady(() {
     var initialSize = const Size(800, 600);
@@ -29,17 +31,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicTheme(
-        themeCollection: upThemeCollection,
-        defaultThemeId: UpThemes.lightRed,
-        builder: (context, theme) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'FileHeron',
-            theme: theme,
-            home: const HomePage(),
-          );
-        });
+    return FlutterUpApp(
+      themeCollection: upThemeCollection,
+      defaultThemeId: UpThemes.lightRed,
+      title: 'FileHeron',
+      routes: {
+        '/home': (context) => const HomePage(),
+      },
+      home: const HomePage(),
+    );
   }
 }
 
@@ -310,7 +310,7 @@ class _RightSideState extends State<RightSide> {
                               ),
                               // initialValue: "localhost",
                               // onChanged: (value) => {host = value},
-                              lable: "host",
+                              label: "host",
                             ),
                           ),
                         ),
@@ -349,7 +349,7 @@ class _RightSideState extends State<RightSide> {
                                 ),
                                 // initialValue: "8080",
                                 // onChanged: (value) => {port = int.parse(value)},
-                                lable: "valid port"),
+                                label: "valid port"),
                           ),
                         ),
                         const SizedBox(
@@ -415,9 +415,9 @@ class _RightSideState extends State<RightSide> {
                                   borderWidth: 1.5,
                                   borderColor: Theme.of(context).primaryColor,
                                   value: isListDir,
-                                  lable: "Show requests in console?",
+                                  label: "Show requests in console?",
                                   // lableDirection: TextDirection.ltr,
-                                  lableDirection: UpTextDirection.left,
+                                  labelDirection: UpTextDirection.left,
                                   onChange: (bool? newcheck) {
                                     setState(
                                       () {
@@ -441,8 +441,8 @@ class _RightSideState extends State<RightSide> {
                             roundedBorderRadius: 5,
                             borderWidth: 1.5,
                             borderColor: Theme.of(context).primaryColor,
-                            lable: "Enable SSL?",
-                            lableDirection: UpTextDirection.left,
+                            label: "Enable SSL?",
+                            labelDirection: UpTextDirection.left,
                             value: isSsl,
                             isDisable: isDisable,
                             onChange: (bool? newcheck) {
