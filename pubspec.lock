@@ -196,10 +196,10 @@ packages:
   flutter_up:
     dependency: "direct main"
     description:
-      path: "../flutter_up"
-      relative: true
-    source: path
-    version: "0.4.0"
+      name: flutter_up
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
