@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fileheron_gui/widgets/left_side.dart';
 import 'package:fileheron_gui/widgets/right_side.dart';
-import 'package:flutter_up/flutter_up_app.dart';
+
 import 'package:flutter_up/models/up_route.dart';
 import 'package:flutter_up/models/up_router_state.dart';
 import 'package:flutter_up/themes/up_themes.dart';
+import 'package:flutter_up/up_app.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FlutterUpApp(
+    return UpApp(
       initialRoute: '/home',
       upRoutes: [
         UpRoute(
@@ -21,8 +22,7 @@ class MyApp extends StatelessWidget {
               const HomePage(),
         )
       ],
-      themeCollection: UpThemes.predefinedThemesCollection,
-      defaultThemeId: UpThemes.lightRed.id,
+      theme: UpThemes.generateThemeByColor(primaryColor: Colors.red),
       title: 'FileHeron',
     );
   }

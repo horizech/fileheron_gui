@@ -5,11 +5,13 @@ import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_server/fileheron_server.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_up/enums/up_text_direction.dart';
+import 'package:flutter_up/locator.dart';
+import 'package:flutter_up/services/up_url.dart';
+import 'package:flutter_up/themes/up_style.dart';
 
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_checkbox.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RightSide extends StatefulWidget {
   const RightSide({Key? key}) : super(key: key);
@@ -39,9 +41,10 @@ class _RightSideState extends State<RightSide> {
 
   FileHeronServer? server;
   Future<void> _launchUrl(String url) async {
-    if (!await launchUrl(Uri.parse(url))) {
-      throw 'Could not launch $url';
-    }
+    await ServiceManager<UpUrlService>().openUrl(url);
+    // if (!await launchUrl(Uri.parse(url))) {
+    //   throw 'Could not launch $url';
+    // }
   }
 
   onStart() {
@@ -145,26 +148,7 @@ class _RightSideState extends State<RightSide> {
                               readOnly: isDisable,
                               keyboardType: TextInputType.text,
                               controller: hostController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2)),
-                                  borderSide: BorderSide(
-                                    width: 0,
-                                    style: BorderStyle.solid,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2)),
-                                  borderSide: BorderSide(
-                                    width: 0,
-                                    style: BorderStyle.solid,
-                                  ),
-                                ),
-                              ),
-                              // initialValue: "localhost",
-                              // onChanged: (value) => {host = value},
+                              style: UpStyle(textfieldBorderRadius: 2),
                               label: "host",
                             ),
                           ),
@@ -184,26 +168,9 @@ class _RightSideState extends State<RightSide> {
                                 readOnly: isDisable,
                                 keyboardType: TextInputType.number,
                                 controller: portController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(2)),
-                                    borderSide: BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.solid,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(2)),
-                                    borderSide: BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.solid,
-                                    ),
-                                  ),
+                                style: UpStyle(
+                                  textfieldBorderRadius: 2,
                                 ),
-                                // initialValue: "8080",
-                                // onChanged: (value) => {port = int.parse(value)},
                                 label: "valid port"),
                           ),
                         ),
@@ -228,10 +195,11 @@ class _RightSideState extends State<RightSide> {
                               SizedBox(
                                 height: 40,
                                 child: UpButton(
-                                    isButtonDisable: isDisable,
-                                    isRounded: true,
-                                    roundedBorderRadius: 5,
-                                    onPress: () async {
+                                    style: UpStyle(
+                                      buttonBorderRadius: 2,
+                                      isDisabled: isDisable,
+                                    ),
+                                    onPressed: () async {
                                       String? result = await FilePicker.platform
                                           .getDirectoryPath(
                                               // allowMultiple: false,
@@ -259,19 +227,12 @@ class _RightSideState extends State<RightSide> {
                             runAlignment: WrapAlignment.center,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              // const Text("listDir : "),
                               UpCheckbox(
-                                  isDisable: isDisable,
-                                  activeColor: Theme.of(context).primaryColor,
-                                  checkColor:
-                                      Theme.of(context).colorScheme.secondary,
-                                  isRounded: true,
-                                  roundedBorderRadius: 5,
-                                  borderWidth: 1.5,
-                                  borderColor: Theme.of(context).primaryColor,
                                   initialValue: isListDir,
+                                  style: UpStyle(
+                                    checkboxBorderRadius: 2,
+                                  ),
                                   label: "Show requests in console?",
-                                  // lableDirection: TextDirection.ltr,
                                   labelDirection: UpTextDirection.left,
                                   onChange: (bool? newcheck) {
                                     setState(
@@ -290,16 +251,13 @@ class _RightSideState extends State<RightSide> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: UpCheckbox(
-                            activeColor: Theme.of(context).primaryColor,
-                            checkColor: Theme.of(context).colorScheme.secondary,
-                            isRounded: true,
-                            roundedBorderRadius: 5,
-                            borderWidth: 1.5,
-                            borderColor: Theme.of(context).primaryColor,
                             label: "Enable SSL?",
+                            style: UpStyle(
+                              checkboxBorderRadius: 2,
+                              isDisabled: isDisable,
+                            ),
                             labelDirection: UpTextDirection.left,
                             initialValue: isSsl,
-                            isDisable: isDisable,
                             onChange: (bool? newcheck) {
                               setState(
                                 () {
@@ -334,10 +292,10 @@ class _RightSideState extends State<RightSide> {
                                         SizedBox(
                                           height: 40,
                                           child: UpButton(
-                                              isButtonDisable: isDisable,
-                                              isRounded: true,
-                                              roundedBorderRadius: 5,
-                                              onPress: () async {
+                                              style: UpStyle(
+                                                  buttonBorderRadius: 2,
+                                                  isDisabled: isDisable),
+                                              onPressed: () async {
                                                 FilePickerResult? result =
                                                     await FilePicker.platform
                                                         .pickFiles(
@@ -380,10 +338,10 @@ class _RightSideState extends State<RightSide> {
                                         SizedBox(
                                           height: 40,
                                           child: UpButton(
-                                              isButtonDisable: isDisable,
-                                              isRounded: true,
-                                              roundedBorderRadius: 5,
-                                              onPress: () async {
+                                              style: UpStyle(
+                                                  buttonBorderRadius: 2,
+                                                  isDisabled: isDisable),
+                                              onPressed: () async {
                                                 FilePickerResult? result =
                                                     await FilePicker.platform
                                                         .pickFiles(
@@ -426,10 +384,10 @@ class _RightSideState extends State<RightSide> {
                                         SizedBox(
                                           height: 40,
                                           child: UpButton(
-                                              isButtonDisable: isDisable,
-                                              isRounded: true,
-                                              roundedBorderRadius: 5,
-                                              onPress: () async {
+                                              style: UpStyle(
+                                                  buttonBorderRadius: 2,
+                                                  isDisabled: isDisable),
+                                              onPressed: () async {
                                                 FilePickerResult? result =
                                                     await FilePicker.platform
                                                         .pickFiles(
@@ -464,28 +422,13 @@ class _RightSideState extends State<RightSide> {
                                     child: SizedBox(
                                       height: 60,
                                       child: UpTextField(
+                                        style: UpStyle(
+                                          textfieldBorderRadius: 2,
+                                        ),
                                         readOnly: isDisable,
                                         keyboardType: TextInputType.text,
                                         obscureText: true,
                                         controller: passwordController,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(2)),
-                                            borderSide: BorderSide(
-                                              width: 0,
-                                              style: BorderStyle.solid,
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(2)),
-                                            borderSide: BorderSide(
-                                              width: 0,
-                                              style: BorderStyle.solid,
-                                            ),
-                                          ),
-                                        ),
                                       ),
                                     ),
                                   ),
@@ -505,10 +448,10 @@ class _RightSideState extends State<RightSide> {
                                         width: 100,
                                         height: 40,
                                         child: UpButton(
-                                          isButtonDisable: isDisable,
-                                          isRounded: true,
-                                          roundedBorderRadius: 5,
-                                          onPress: () {
+                                          style: UpStyle(
+                                              buttonBorderRadius: 2,
+                                              isDisabled: isDisable),
+                                          onPressed: () {
                                             if (_formKey.currentState!
                                                 .validate()) {
                                               onStart();
@@ -541,9 +484,10 @@ class _RightSideState extends State<RightSide> {
                                                   ),
                                                   actions: [
                                                     UpButton(
-                                                        isRounded: true,
-                                                        roundedBorderRadius: 5,
-                                                        onPress: () {
+                                                        style: UpStyle(
+                                                          buttonBorderRadius: 2,
+                                                        ),
+                                                        onPressed: () {
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -560,9 +504,10 @@ class _RightSideState extends State<RightSide> {
                                         width: 100,
                                         height: 40,
                                         child: UpButton(
-                                          isRounded: true,
-                                          roundedBorderRadius: 5,
-                                          onPress: () {
+                                          style: UpStyle(
+                                            buttonBorderRadius: 2,
+                                          ),
+                                          onPressed: () {
                                             onStop();
                                             setState(() {
                                               isDisable = false;
@@ -575,9 +520,10 @@ class _RightSideState extends State<RightSide> {
                                                     "Service Stoped"),
                                                 actions: [
                                                   UpButton(
-                                                      isRounded: true,
-                                                      roundedBorderRadius: 5,
-                                                      onPress: () {
+                                                      style: UpStyle(
+                                                        buttonBorderRadius: 2,
+                                                      ),
+                                                      onPressed: () {
                                                         Navigator.pop(context);
                                                       },
                                                       child: const Text('Ok'))
@@ -610,21 +556,8 @@ Widget styledTextFiled(TextEditingController controller, bool isDisable) {
       readOnly: isDisable,
       keyboardType: TextInputType.text,
       controller: controller,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(2)),
-          borderSide: BorderSide(
-            width: 0,
-            style: BorderStyle.solid,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(2)),
-          borderSide: BorderSide(
-            width: 0,
-            style: BorderStyle.solid,
-          ),
-        ),
+      style: UpStyle(
+        textfieldBorderRadius: 2,
       ),
     ),
   );
