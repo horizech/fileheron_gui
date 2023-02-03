@@ -1,5 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_up/config/up_config.dart';
 
 class LeftSide extends StatelessWidget {
   const LeftSide({Key? key}) : super(key: key);
@@ -9,7 +10,7 @@ class LeftSide extends StatelessWidget {
     return SizedBox(
       width: 200,
       child: Container(
-        color: Theme.of(context).primaryColor,
+        color: UpConfig.of(context).theme.primaryColor,
         child: Column(
           children: [
             WindowTitleBarBox(

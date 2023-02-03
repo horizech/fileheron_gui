@@ -112,7 +112,7 @@ class _RightSideState extends State<RightSide> {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Theme.of(context).colorScheme.secondary,
+        color: Colors.white,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
@@ -193,7 +193,7 @@ class _RightSideState extends State<RightSide> {
                                 width: 10,
                               ),
                               SizedBox(
-                                height: 40,
+                                width: 200,
                                 child: UpButton(
                                     style: UpStyle(
                                       buttonBorderRadius: 2,
@@ -213,7 +213,7 @@ class _RightSideState extends State<RightSide> {
                                         });
                                       }
                                     },
-                                    child: const Text(" Select ")),
+                                    text: " Select "),
                               ),
                             ],
                           ),
@@ -291,6 +291,7 @@ class _RightSideState extends State<RightSide> {
                                         ),
                                         SizedBox(
                                           height: 40,
+                                          width: 200,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -312,7 +313,7 @@ class _RightSideState extends State<RightSide> {
                                                   });
                                                 }
                                               },
-                                              child: const Text("Browse")),
+                                              text: "Browse"),
                                         ),
                                       ],
                                     ),
@@ -336,7 +337,7 @@ class _RightSideState extends State<RightSide> {
                                           width: 10,
                                         ),
                                         SizedBox(
-                                          height: 40,
+                                          width: 200,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -358,7 +359,7 @@ class _RightSideState extends State<RightSide> {
                                                   });
                                                 }
                                               },
-                                              child: const Text("Browse")),
+                                              text: "Browse"),
                                         ),
                                       ],
                                     ),
@@ -382,7 +383,7 @@ class _RightSideState extends State<RightSide> {
                                           width: 10,
                                         ),
                                         SizedBox(
-                                          height: 40,
+                                          width: 200,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -405,7 +406,7 @@ class _RightSideState extends State<RightSide> {
                                                   });
                                                 }
                                               },
-                                              child: const Text("Browse")),
+                                              text: "Browse"),
                                         ),
                                       ],
                                     ),
@@ -446,7 +447,6 @@ class _RightSideState extends State<RightSide> {
                                 child: isStart == false
                                     ? SizedBox(
                                         width: 100,
-                                        height: 40,
                                         child: UpButton(
                                           style: UpStyle(
                                               buttonBorderRadius: 2,
@@ -491,18 +491,17 @@ class _RightSideState extends State<RightSide> {
                                                           Navigator.pop(
                                                               context);
                                                         },
-                                                        child: const Text('Ok'))
+                                                        text: 'Ok')
                                                   ],
                                                 ),
                                               );
                                             }
                                           },
-                                          child: const Text('Start'),
+                                          text: 'Start',
                                         ),
                                       )
                                     : SizedBox(
                                         width: 100,
-                                        height: 40,
                                         child: UpButton(
                                           style: UpStyle(
                                             buttonBorderRadius: 2,
@@ -531,7 +530,7 @@ class _RightSideState extends State<RightSide> {
                                               ),
                                             );
                                           },
-                                          child: const Text('Stop'),
+                                          text: 'Stop',
                                         ),
                                       )),
                           ),
