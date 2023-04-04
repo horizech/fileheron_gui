@@ -192,7 +192,7 @@ packages:
       name: flutter_up
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.3"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

@@ -184,6 +184,7 @@ class _RightSideState extends State<RightSide> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
                                 child:
@@ -281,6 +282,8 @@ class _RightSideState extends State<RightSide> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: styledTextFiled(
@@ -290,7 +293,6 @@ class _RightSideState extends State<RightSide> {
                                           width: 10,
                                         ),
                                         SizedBox(
-                                          height: 40,
                                           width: 200,
                                           child: UpButton(
                                               style: UpStyle(
@@ -328,6 +330,8 @@ class _RightSideState extends State<RightSide> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
                                             child: styledTextFiled(
@@ -374,6 +378,8 @@ class _RightSideState extends State<RightSide> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: styledTextFiled(
@@ -464,6 +470,9 @@ class _RightSideState extends State<RightSide> {
                                                     AlertDialog(
                                                   title: const Text('Service'),
                                                   content: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: [
                                                       const Text(
                                                           "Service started at "),
@@ -525,7 +534,7 @@ class _RightSideState extends State<RightSide> {
                                                       onPressed: () {
                                                         Navigator.pop(context);
                                                       },
-                                                      child: const Text('Ok'))
+                                                      text: 'Ok')
                                                 ],
                                               ),
                                             );
