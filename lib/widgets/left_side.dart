@@ -36,10 +36,10 @@ class LeftSide extends StatelessWidget {
               thickness: 1,
               color: Colors.white,
             ),
-            Column(
+            const Column(
               children: [
                 Row(
-                  children: const [
+                  children: [
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
@@ -58,7 +58,7 @@ class LeftSide extends StatelessWidget {
                   ],
                 ),
                 Row(
-                  children: const [
+                  children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
                       child: Text(

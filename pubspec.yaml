@@ -36,7 +36,7 @@ dependencies:
   file_picker: ^5.0.1
   fileheron_server: ^1.0.4
   # url_launcher: ^6.0.2
-  flutter_up: ^2.0.3
+  flutter_up: ^2.0.6
   # flutter_up:
   #   path: ../flutter_up
   bitsdojo_window: ^0.1.5

@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
       body: WindowBorder(
         width: 1,
         color: Colors.black,
-        child: Row(children: const [
+        child: const Row(children: [
           LeftSide(),
           Expanded(
             child: RightSide(),
