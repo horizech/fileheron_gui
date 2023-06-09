@@ -207,10 +207,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_up
-      sha256: be0a4303a6e08bdfa2e2715fecb3fab896e54cf32665bd9e2d7623b970b5556f
+      sha256: "6767093a08cf9115e2445cc92c4fa1a6a8d6e70bb89e4e6cb2382e128b9423fe"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.6"
+    version: "3.0.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

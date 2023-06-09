@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
               const HomePage(),
         )
       ],
-      theme: UpThemes.generateThemeByColor(primaryColor: Colors.red),
+      theme: UpThemes.generateThemeByColor(
+          baseColor: Colors.white, primaryColor: Colors.red),
       title: 'FileHeron',
     );
   }

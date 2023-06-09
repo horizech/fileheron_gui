@@ -4,6 +4,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_server/fileheron_server.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/enums/up_text_direction.dart';
 import 'package:flutter_up/locator.dart';
 import 'package:flutter_up/services/up_url.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_up/themes/up_style.dart';
 
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_checkbox.dart';
+import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
 
 class RightSide extends StatefulWidget {
@@ -112,7 +114,7 @@ class _RightSideState extends State<RightSide> {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Colors.white,
+        color: UpConfig.of(context).theme.baseColor,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
@@ -138,7 +140,7 @@ class _RightSideState extends State<RightSide> {
                       children: <Widget>[
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
-                          child: Text("Host: "),
+                          child: UpText("Host: "),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -158,7 +160,7 @@ class _RightSideState extends State<RightSide> {
                         ),
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
-                          child: Text("Port: "),
+                          child: UpText("Port: "),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -179,7 +181,7 @@ class _RightSideState extends State<RightSide> {
                         ),
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
-                          child: Text("Root: "),
+                          child: UpText("Root: "),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -194,7 +196,7 @@ class _RightSideState extends State<RightSide> {
                                 width: 10,
                               ),
                               SizedBox(
-                                width: 200,
+                                width: 100,
                                 child: UpButton(
                                     style: UpStyle(
                                       buttonBorderRadius: 2,
@@ -244,7 +246,7 @@ class _RightSideState extends State<RightSide> {
                                   }),
                               const Padding(
                                 padding: EdgeInsets.only(left: 8.0),
-                                child: Text(" "),
+                                child: UpText(" "),
                               ),
                             ],
                           ),
@@ -277,7 +279,7 @@ class _RightSideState extends State<RightSide> {
                                 children: [
                                   const Padding(
                                     padding: EdgeInsets.only(left: 8.0),
-                                    child: Text("Log File: "),
+                                    child: UpText("Log File: "),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -293,7 +295,7 @@ class _RightSideState extends State<RightSide> {
                                           width: 10,
                                         ),
                                         SizedBox(
-                                          width: 200,
+                                          width: 100,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -325,7 +327,7 @@ class _RightSideState extends State<RightSide> {
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 8.0),
-                                    child: Text("Certificate Chain file: "),
+                                    child: UpText("Certificate Chain file: "),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -341,7 +343,7 @@ class _RightSideState extends State<RightSide> {
                                           width: 10,
                                         ),
                                         SizedBox(
-                                          width: 200,
+                                          width: 100,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -373,7 +375,7 @@ class _RightSideState extends State<RightSide> {
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 8.0),
-                                    child: Text("Server Key file: "),
+                                    child: UpText("Server Key file: "),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -389,7 +391,7 @@ class _RightSideState extends State<RightSide> {
                                           width: 10,
                                         ),
                                         SizedBox(
-                                          width: 200,
+                                          width: 100,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -422,7 +424,7 @@ class _RightSideState extends State<RightSide> {
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 8.0),
-                                    child: Text("Server Key Password: "),
+                                    child: UpText("Server Key Password: "),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -441,7 +443,7 @@ class _RightSideState extends State<RightSide> {
                                   ),
                                 ],
                               )
-                            : const Text(""),
+                            : const UpText(""),
                         const SizedBox(
                           height: 10,
                         ),
@@ -468,23 +470,24 @@ class _RightSideState extends State<RightSide> {
                                                 context: context,
                                                 builder: (context) =>
                                                     AlertDialog(
-                                                  title: const Text('Service'),
+                                                  title:
+                                                      const UpText('Service'),
                                                   content: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .center,
                                                     children: [
-                                                      const Text(
+                                                      const UpText(
                                                           "Service started at "),
                                                       InkWell(
                                                         onTap: () {
                                                           _launchUrl(
                                                               "http://${hostController.text}:${portController.text}");
                                                         },
-                                                        child: Text(
+                                                        child: UpText(
                                                           "http://${hostController.text}:${portController.text}",
-                                                          style: const TextStyle(
-                                                              decoration:
+                                                          style: UpStyle(
+                                                              textDecoration:
                                                                   TextDecoration
                                                                       .underline),
                                                         ),
@@ -492,15 +495,19 @@ class _RightSideState extends State<RightSide> {
                                                     ],
                                                   ),
                                                   actions: [
-                                                    UpButton(
-                                                        style: UpStyle(
-                                                          buttonBorderRadius: 2,
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        text: 'Ok')
+                                                    SizedBox(
+                                                      width: 100,
+                                                      child: UpButton(
+                                                          style: UpStyle(
+                                                            buttonBorderRadius:
+                                                                2,
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          text: 'Ok'),
+                                                    )
                                                   ],
                                                 ),
                                               );
@@ -523,18 +530,22 @@ class _RightSideState extends State<RightSide> {
                                             showDialog(
                                               context: context,
                                               builder: (context) => AlertDialog(
-                                                title: const Text('Service'),
-                                                content: const Text(
+                                                title: const UpText('Service'),
+                                                content: const UpText(
                                                     "Service Stoped"),
                                                 actions: [
-                                                  UpButton(
-                                                      style: UpStyle(
-                                                        buttonBorderRadius: 2,
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      text: 'Ok')
+                                                  SizedBox(
+                                                    width: 100,
+                                                    child: UpButton(
+                                                        style: UpStyle(
+                                                          buttonBorderRadius: 2,
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        text: 'Ok'),
+                                                  )
                                                 ],
                                               ),
                                             );

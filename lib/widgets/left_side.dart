@@ -1,6 +1,8 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
+import 'package:flutter_up/widgets/up_icon.dart';
+import 'package:flutter_up/widgets/up_text.dart';
 
 class LeftSide extends StatelessWidget {
   const LeftSide({Key? key}) : super(key: key);
@@ -10,7 +12,7 @@ class LeftSide extends StatelessWidget {
     return SizedBox(
       width: 200,
       child: Container(
-        color: UpConfig.of(context).theme.primaryColor,
+        color: UpConfig.of(context).theme.baseColor.shade50,
         child: Column(
           children: [
             WindowTitleBarBox(
@@ -19,12 +21,12 @@ class LeftSide extends StatelessWidget {
                   Expanded(
                     child: MoveWindow(),
                   ),
-                  const Text(
+                  const UpText(
                     "FileHeron",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    // style: TextStyle(
+                    //   color: Colors.white,
+                    //   fontWeight: FontWeight.bold,
+                    // ),
                   ),
                   Expanded(
                     child: MoveWindow(),
@@ -32,9 +34,9 @@ class LeftSide extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(
+            Divider(
               thickness: 1,
-              color: Colors.white,
+              color: UpConfig.of(context).theme.baseColor.shade200,
             ),
             const Column(
               children: [
@@ -43,17 +45,16 @@ class LeftSide extends StatelessWidget {
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                        child: Text(
+                        child: UpText(
                           "Server",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
+                          // style: TextStyle(
+                          //   color: Colors.white,
+                          // ),
                         ),
                       ),
                     ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.white,
+                    UpIcon(
+                      icon: Icons.arrow_drop_down,
                     ),
                   ],
                 ),
@@ -61,12 +62,12 @@ class LeftSide extends StatelessWidget {
                   children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                      child: Text(
+                      child: UpText(
                         "Local Server",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        // style: TextStyle(
+                        //   color: Colors.white,
+                        //   fontWeight: FontWeight.bold,
+                        // ),
                       ),
                     ),
                   ],
