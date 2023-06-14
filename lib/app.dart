@@ -23,7 +23,9 @@ class MyApp extends StatelessWidget {
         )
       ],
       theme: UpThemes.generateThemeByColor(
-          baseColor: Colors.white, primaryColor: Colors.red),
+          baseColor: const Color.fromARGB(255, 25, 23, 30),
+          isDark: true,
+          primaryColor: Colors.red),
       title: 'FileHeron',
     );
   }

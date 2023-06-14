@@ -8,3 +8,4 @@ const String? kDefaultCertificateChain = null;
 const String? kDefaultServerKey = null;
 const String? kDefaultServerKeyPassword = null;
 const String kDefaultServerType = 'static';
+const String version = "v 1.1.0";

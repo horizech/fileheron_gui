@@ -1,4 +1,5 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:fileheron_gui/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
@@ -38,42 +39,51 @@ class LeftSide extends StatelessWidget {
               thickness: 1,
               color: UpConfig.of(context).theme.baseColor.shade200,
             ),
-            const Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+            const Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                          child: UpText(
+                            "Server",
+                            // style: TextStyle(
+                            //   color: Colors.white,
+                            // ),
+                          ),
+                        ),
+                      ),
+                      UpIcon(
+                        icon: Icons.arrow_drop_down,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
                         child: UpText(
-                          "Server",
+                          "Local Server",
                           // style: TextStyle(
                           //   color: Colors.white,
+                          //   fontWeight: FontWeight.bold,
                           // ),
                         ),
                       ),
-                    ),
-                    UpIcon(
-                      icon: Icons.arrow_drop_down,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                      child: UpText(
-                        "Local Server",
-                        // style: TextStyle(
-                        //   color: Colors.white,
-                        //   fontWeight: FontWeight.bold,
-                        // ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
+            const Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: UpText(version),
+              ),
+            )
           ],
         ),
       ),

@@ -151,7 +151,7 @@ class _RightSideState extends State<RightSide> {
                               keyboardType: TextInputType.text,
                               controller: hostController,
                               style: UpStyle(textfieldBorderRadius: 2),
-                              label: "host",
+                              // label: "Host",
                             ),
                           ),
                         ),
@@ -167,13 +167,14 @@ class _RightSideState extends State<RightSide> {
                           child: SizedBox(
                             height: 60,
                             child: UpTextField(
-                                readOnly: isDisable,
-                                keyboardType: TextInputType.number,
-                                controller: portController,
-                                style: UpStyle(
-                                  textfieldBorderRadius: 2,
-                                ),
-                                label: "valid port"),
+                              readOnly: isDisable,
+                              keyboardType: TextInputType.number,
+                              controller: portController,
+                              style: UpStyle(
+                                textfieldBorderRadius: 2,
+                              ),
+                              // label: "Valid port",
+                            ),
                           ),
                         ),
                         const SizedBox(
