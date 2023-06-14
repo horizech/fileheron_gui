@@ -1,6 +1,6 @@
 ## 1.1.0
 
-- FlutterUp theme implemented.
+- Upgraded to flutter_up 3.0.3.
 
 ## 1.0.0
 
