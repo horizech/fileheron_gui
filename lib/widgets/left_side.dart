@@ -5,9 +5,16 @@ import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
-class LeftSide extends StatelessWidget {
-  const LeftSide({Key? key}) : super(key: key);
+class LeftSide extends StatefulWidget {
+  final Function(String)? callback;
+  final String? view;
+  const LeftSide({Key? key, this.callback, this.view}) : super(key: key);
 
+  @override
+  State<LeftSide> createState() => _LeftSideState();
+}
+
+class _LeftSideState extends State<LeftSide> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -24,10 +31,6 @@ class LeftSide extends StatelessWidget {
                   ),
                   const UpText(
                     "FileHeron",
-                    // style: TextStyle(
-                    //   color: Colors.white,
-                    //   fontWeight: FontWeight.bold,
-                    // ),
                   ),
                   Expanded(
                     child: MoveWindow(),
@@ -39,10 +42,10 @@ class LeftSide extends StatelessWidget {
               thickness: 1,
               color: UpConfig.of(context).theme.baseColor.shade200,
             ),
-            const Expanded(
+            Expanded(
               child: Column(
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: Padding(
@@ -60,19 +63,65 @@ class LeftSide extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                        child: UpText(
-                          "Local Server",
-                          // style: TextStyle(
-                          //   color: Colors.white,
-                          //   fontWeight: FontWeight.bold,
-                          // ),
+                  GestureDetector(
+                    onTap: (() {
+                      widget.callback!("1");
+                      setState(() {});
+                    }),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                          child: UpText(
+                            "Local Server",
+                            // style: TextStyle(
+                            //   color: Colors.white,
+                            //   fontWeight: FontWeight.bold,
+                            // ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (() {
+                      widget.callback!("2");
+                      setState(() {});
+                    }),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                          child: UpText(
+                            "Login",
+                            // style: TextStyle(
+                            //   color: Colors.white,
+                            //   fontWeight: FontWeight.bold,
+                            // ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (() {
+                      widget.callback!("3");
+                      setState(() {});
+                    }),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                          child: UpText(
+                            "Projects",
+                            // style: TextStyle(
+                            //   color: Colors.white,
+                            //   fontWeight: FontWeight.bold,
+                            // ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

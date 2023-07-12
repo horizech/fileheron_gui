@@ -1,3 +1,5 @@
+import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
+import 'package:fileheron_gui/widgets/projects.dart';
 import 'package:fileheron_gui/widgets/window_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -9,14 +11,14 @@ import 'package:flutter_up/enums/up_text_direction.dart';
 import 'package:flutter_up/locator.dart';
 import 'package:flutter_up/services/up_url.dart';
 import 'package:flutter_up/themes/up_style.dart';
-
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_checkbox.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
 
 class RightSide extends StatefulWidget {
-  const RightSide({Key? key}) : super(key: key);
+  int view;
+  RightSide({Key? key, required this.view}) : super(key: key);
 
   @override
   State<RightSide> createState() => _RightSideState();
@@ -129,60 +131,165 @@ class _RightSideState extends State<RightSide> {
                   ],
                 ),
               ),
+              Padding(padding: const EdgeInsets.all(8.0), child: mainScreen()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget mainScreen() {
+    if (widget.view == 1) {
+      return SizedBox(
+        width: 500,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: UpText("Host: "),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
-                  width: 500,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
+                  height: 60,
+                  child: UpTextField(
+                    readOnly: isDisable,
+                    keyboardType: TextInputType.text,
+                    controller: hostController,
+                    style: UpStyle(textfieldBorderRadius: 2),
+                    // label: "Host",
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: UpText("Port: "),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 60,
+                  child: UpTextField(
+                    readOnly: isDisable,
+                    keyboardType: TextInputType.number,
+                    controller: portController,
+                    style: UpStyle(
+                      textfieldBorderRadius: 2,
+                    ),
+                    // label: "Valid port",
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: UpText("Root: "),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: styledTextFiled(rootController, isDisable),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: UpButton(
+                          style: UpStyle(
+                            buttonBorderRadius: 2,
+                            isDisabled: isDisable,
+                          ),
+                          onPressed: () async {
+                            String? result =
+                                await FilePicker.platform.getDirectoryPath(
+                                    // allowMultiple: false,
+                                    // type: FileType.up,
+                                    // allowedExtensions: ['jpg', 'pdf', 'doc'],
+                                    );
+                            if (result != null && result.isNotEmpty) {
+                              setState(() {
+                                rootfile = result;
+                                rootController.text = result;
+                              });
+                            }
+                          },
+                          text: " Select "),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Wrap(
+                  runAlignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    UpCheckbox(
+                        initialValue: isListDir,
+                        style: UpStyle(
+                          checkboxBorderRadius: 2,
+                        ),
+                        label: "Show requests in console?",
+                        labelDirection: UpTextDirection.left,
+                        onChange: (bool? newcheck) {
+                          setState(
+                            () {
+                              isListDir = newcheck ?? false;
+                            },
+                          );
+                        }),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: UpText(" "),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: UpCheckbox(
+                  label: "Enable SSL?",
+                  style: UpStyle(
+                    checkboxBorderRadius: 2,
+                    isDisabled: isDisable,
+                  ),
+                  labelDirection: UpTextDirection.left,
+                  initialValue: isSsl,
+                  onChange: (bool? newcheck) {
+                    setState(
+                      () {
+                        isSsl = newcheck ?? false;
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              isSsl
+                  ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
+                      children: [
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
-                          child: UpText("Host: "),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            height: 60,
-                            child: UpTextField(
-                              readOnly: isDisable,
-                              keyboardType: TextInputType.text,
-                              controller: hostController,
-                              style: UpStyle(textfieldBorderRadius: 2),
-                              // label: "Host",
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: UpText("Port: "),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            height: 60,
-                            child: UpTextField(
-                              readOnly: isDisable,
-                              keyboardType: TextInputType.number,
-                              controller: portController,
-                              style: UpStyle(
-                                textfieldBorderRadius: 2,
-                              ),
-                              // label: "Valid port",
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: UpText("Root: "),
+                          child: UpText("Log File: "),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -190,8 +297,8 @@ class _RightSideState extends State<RightSide> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
-                                child:
-                                    styledTextFiled(rootController, isDisable),
+                                child: styledTextFiled(
+                                    logFileController, isDisable),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -200,24 +307,24 @@ class _RightSideState extends State<RightSide> {
                                 width: 100,
                                 child: UpButton(
                                     style: UpStyle(
-                                      buttonBorderRadius: 2,
-                                      isDisabled: isDisable,
-                                    ),
+                                        buttonBorderRadius: 2,
+                                        isDisabled: isDisable),
                                     onPressed: () async {
-                                      String? result = await FilePicker.platform
-                                          .getDirectoryPath(
-                                              // allowMultiple: false,
-                                              // type: FileType.up,
-                                              // allowedExtensions: ['jpg', 'pdf', 'doc'],
-                                              );
-                                      if (result != null && result.isNotEmpty) {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                        allowMultiple: false,
+                                        // type: FileType.up,
+                                        // allowedExtensions: ['jpg', 'pdf', 'doc'],
+                                      );
+                                      if (result != null) {
                                         setState(() {
-                                          rootfile = result;
-                                          rootController.text = result;
+                                          logfile = result;
+                                          logFileController.text =
+                                              logfile!.names.first ?? "";
                                         });
                                       }
                                     },
-                                    text: " Select "),
+                                    text: "Browse"),
                               ),
                             ],
                           ),
@@ -225,347 +332,229 @@ class _RightSideState extends State<RightSide> {
                         const SizedBox(
                           height: 10,
                         ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: UpText("Certificate Chain file: "),
+                        ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Wrap(
-                            runAlignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              UpCheckbox(
-                                  initialValue: isListDir,
-                                  style: UpStyle(
-                                    checkboxBorderRadius: 2,
-                                  ),
-                                  label: "Show requests in console?",
-                                  labelDirection: UpTextDirection.left,
-                                  onChange: (bool? newcheck) {
-                                    setState(
-                                      () {
-                                        isListDir = newcheck ?? false;
-                                      },
-                                    );
-                                  }),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 8.0),
-                                child: UpText(" "),
+                              Expanded(
+                                  child: styledTextFiled(
+                                      certificateChainController, isDisable)),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: UpButton(
+                                    style: UpStyle(
+                                        buttonBorderRadius: 2,
+                                        isDisabled: isDisable),
+                                    onPressed: () async {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                        allowMultiple: false,
+                                      );
+                                      if (result != null) {
+                                        setState(() {
+                                          certificateChain = result;
+                                          certificateChainController.text =
+                                              certificateChain!.names.first ??
+                                                  "";
+                                        });
+                                      }
+                                    },
+                                    text: "Browse"),
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: UpText("Server Key file: "),
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: UpCheckbox(
-                            label: "Enable SSL?",
-                            style: UpStyle(
-                              checkboxBorderRadius: 2,
-                              isDisabled: isDisable,
-                            ),
-                            labelDirection: UpTextDirection.left,
-                            initialValue: isSsl,
-                            onChange: (bool? newcheck) {
-                              setState(
-                                () {
-                                  isSsl = newcheck ?? false;
-                                },
-                              );
-                            },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: styledTextFiled(
+                                    serverKeyController, isDisable),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: UpButton(
+                                    style: UpStyle(
+                                        buttonBorderRadius: 2,
+                                        isDisabled: isDisable),
+                                    onPressed: () async {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                        allowMultiple: false,
+                                      );
+                                      if (result != null) {
+                                        // File file = File(serverKey!.files.single.path ?? "");
+                                        //  Uint8List fileBytes = serverKey.files.first.bytes;
+                                        setState(() {
+                                          serverKey = result;
+                                          serverKeyController.text =
+                                              serverKey!.names.first ?? "";
+                                        });
+                                      }
+                                    },
+                                    text: "Browse"),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        isSsl
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: UpText("Log File: "),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: styledTextFiled(
-                                              logFileController, isDisable),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          child: UpButton(
-                                              style: UpStyle(
-                                                  buttonBorderRadius: 2,
-                                                  isDisabled: isDisable),
-                                              onPressed: () async {
-                                                FilePickerResult? result =
-                                                    await FilePicker.platform
-                                                        .pickFiles(
-                                                  allowMultiple: false,
-                                                  // type: FileType.up,
-                                                  // allowedExtensions: ['jpg', 'pdf', 'doc'],
-                                                );
-                                                if (result != null) {
-                                                  setState(() {
-                                                    logfile = result;
-                                                    logFileController.text =
-                                                        logfile!.names.first ??
-                                                            "";
-                                                  });
-                                                }
-                                              },
-                                              text: "Browse"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: UpText("Certificate Chain file: "),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                            child: styledTextFiled(
-                                                certificateChainController,
-                                                isDisable)),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          child: UpButton(
-                                              style: UpStyle(
-                                                  buttonBorderRadius: 2,
-                                                  isDisabled: isDisable),
-                                              onPressed: () async {
-                                                FilePickerResult? result =
-                                                    await FilePicker.platform
-                                                        .pickFiles(
-                                                  allowMultiple: false,
-                                                );
-                                                if (result != null) {
-                                                  setState(() {
-                                                    certificateChain = result;
-                                                    certificateChainController
-                                                            .text =
-                                                        certificateChain!
-                                                                .names.first ??
-                                                            "";
-                                                  });
-                                                }
-                                              },
-                                              text: "Browse"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: UpText("Server Key file: "),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: styledTextFiled(
-                                              serverKeyController, isDisable),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          child: UpButton(
-                                              style: UpStyle(
-                                                  buttonBorderRadius: 2,
-                                                  isDisabled: isDisable),
-                                              onPressed: () async {
-                                                FilePickerResult? result =
-                                                    await FilePicker.platform
-                                                        .pickFiles(
-                                                  allowMultiple: false,
-                                                );
-                                                if (result != null) {
-                                                  // File file = File(serverKey!.files.single.path ?? "");
-                                                  //  Uint8List fileBytes = serverKey.files.first.bytes;
-                                                  setState(() {
-                                                    serverKey = result;
-                                                    serverKeyController.text =
-                                                        serverKey!
-                                                                .names.first ??
-                                                            "";
-                                                  });
-                                                }
-                                              },
-                                              text: "Browse"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: UpText("Server Key Password: "),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      height: 60,
-                                      child: UpTextField(
-                                        style: UpStyle(
-                                          textfieldBorderRadius: 2,
-                                        ),
-                                        readOnly: isDisable,
-                                        keyboardType: TextInputType.text,
-                                        obscureText: true,
-                                        controller: passwordController,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const UpText(""),
-                        const SizedBox(
-                          height: 10,
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: UpText("Server Key Password: "),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: SizedBox(
-                                height: 40,
-                                child: isStart == false
-                                    ? SizedBox(
-                                        width: 100,
-                                        child: UpButton(
-                                          style: UpStyle(
-                                              buttonBorderRadius: 2,
-                                              isDisabled: isDisable),
-                                          onPressed: () {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              onStart();
-                                              setState(() {
-                                                isDisable = true;
-                                              });
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  title:
-                                                      const UpText('Service'),
-                                                  content: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const UpText(
-                                                          "Service started at "),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          _launchUrl(
-                                                              "http://${hostController.text}:${portController.text}");
-                                                        },
-                                                        child: UpText(
-                                                          "http://${hostController.text}:${portController.text}",
-                                                          style: UpStyle(
-                                                              textDecoration:
-                                                                  TextDecoration
-                                                                      .underline),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  actions: [
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: UpButton(
-                                                          style: UpStyle(
-                                                            buttonBorderRadius:
-                                                                2,
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          text: 'Ok'),
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          text: 'Start',
-                                        ),
-                                      )
-                                    : SizedBox(
-                                        width: 100,
-                                        child: UpButton(
-                                          style: UpStyle(
-                                            buttonBorderRadius: 2,
-                                          ),
-                                          onPressed: () {
-                                            onStop();
-                                            setState(() {
-                                              isDisable = false;
-                                            });
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                title: const UpText('Service'),
-                                                content: const UpText(
-                                                    "Service Stoped"),
-                                                actions: [
-                                                  SizedBox(
-                                                    width: 100,
-                                                    child: UpButton(
-                                                        style: UpStyle(
-                                                          buttonBorderRadius: 2,
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        text: 'Ok'),
-                                                  )
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          text: 'Stop',
-                                        ),
-                                      )),
+                          child: SizedBox(
+                            height: 60,
+                            child: UpTextField(
+                              style: UpStyle(
+                                textfieldBorderRadius: 2,
+                              ),
+                              readOnly: isDisable,
+                              keyboardType: TextInputType.text,
+                              obscureText: true,
+                              controller: passwordController,
+                            ),
                           ),
                         ),
                       ],
-                    ),
-                  ),
+                    )
+                  : const UpText(""),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: SizedBox(
+                      height: 40,
+                      child: isStart == false
+                          ? SizedBox(
+                              width: 100,
+                              child: UpButton(
+                                style: UpStyle(
+                                    buttonBorderRadius: 2,
+                                    isDisabled: isDisable),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    onStart();
+                                    setState(() {
+                                      isDisable = true;
+                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const UpText('Service'),
+                                        content: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            const UpText("Service started at "),
+                                            InkWell(
+                                              onTap: () {
+                                                _launchUrl(
+                                                    "http://${hostController.text}:${portController.text}");
+                                              },
+                                              child: UpText(
+                                                "http://${hostController.text}:${portController.text}",
+                                                style: UpStyle(
+                                                    textDecoration:
+                                                        TextDecoration
+                                                            .underline),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          SizedBox(
+                                            width: 100,
+                                            child: UpButton(
+                                                style: UpStyle(
+                                                  buttonBorderRadius: 2,
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                text: 'Ok'),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                                text: 'Start',
+                              ),
+                            )
+                          : SizedBox(
+                              width: 100,
+                              child: UpButton(
+                                style: UpStyle(
+                                  buttonBorderRadius: 2,
+                                ),
+                                onPressed: () {
+                                  onStop();
+                                  setState(() {
+                                    isDisable = false;
+                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const UpText('Service'),
+                                      content: const UpText("Service Stoped"),
+                                      actions: [
+                                        SizedBox(
+                                          width: 100,
+                                          child: UpButton(
+                                              style: UpStyle(
+                                                buttonBorderRadius: 2,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              text: 'Ok'),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                                text: 'Stop',
+                              ),
+                            )),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
+      );
+    } else if (widget.view == 2) {
+      return const LoginSignupPage();
+    } else if (widget.view == 3) {
+      return const Projects();
+    } else {
+      return const SizedBox();
+    }
   }
 }
 
