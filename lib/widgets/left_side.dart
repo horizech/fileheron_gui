@@ -107,43 +107,60 @@ class _LeftSideState extends State<LeftSide> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (() {
-                      setState(() {
-                        widget.callback!("2");
-                      });
-                    }),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                      child: Row(
-                        children: [
-                          isUserLogin()
-                              ? UpIcon(
+                  !isUserLogin()
+                      ? GestureDetector(
+                          onTap: (() {
+                            setState(() {
+                              widget.callback!("2");
+                            });
+                          }),
+                          child: const Padding(
+                            padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                            child: Row(
+                              children: [
+                                UpIcon(
+                                  icon: Icons.login,
+                                ),
+                                SizedBox(width: 6),
+                                UpText("LOGIN"),
+                              ],
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+                  isUserLogin()
+                      ? GestureDetector(
+                          onTap: (() {
+                            setState(() {
+                              widget.callback!("4");
+                            });
+                          }),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+                            child: Row(
+                              children: [
+                                UpIcon(
                                   icon: Icons.logout,
                                   style: UpStyle(
                                       iconColor: UpConfig.of(context)
                                           .theme
                                           .baseColor
                                           .shade600),
-                                )
-                              : const UpIcon(
-                                  icon: Icons.login,
                                 ),
-                          const SizedBox(width: 6),
-                          isUserLogin()
-                              ? UpText(
+                                const SizedBox(width: 6),
+                                UpText(
                                   "LOGOUT",
                                   style: UpStyle(
                                       textColor: UpConfig.of(context)
                                           .theme
                                           .baseColor
                                           .shade600),
-                                )
-                              : const UpText("LOGIN"),
-                        ],
-                      ),
-                    ),
-                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
                 ],
               ),
             ),

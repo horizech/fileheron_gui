@@ -556,8 +556,10 @@ class _RightSideState extends State<RightSide> {
         ),
       );
     }
-    if (widget.view == 2 && user != null && user!.roleIds != null) {
-      setState(() {});
+    if (widget.view == 2) {
+      return const LoginSignupPage();
+    }
+    if (widget.view == 4) {
       return Column(
         children: [
           const UpText("User Logged In"),
@@ -572,11 +574,29 @@ class _RightSideState extends State<RightSide> {
           ),
         ],
       );
-    } else {
-      setState(() {
-        const LoginSignupPage();
-      });
     }
+
+    // if (widget.view == 2 && user != null && user!.roleIds != null) {
+    //   setState(() {});
+    //   return Column(
+    //     children: [
+    //       const UpText("User Logged In"),
+    //       const SizedBox(height: 8),
+    //       UpButton(
+    //         onPressed: () {
+    //           setState(() {
+    //             Apiraiser.authentication.signOut();
+    //           });
+    //         },
+    //         text: 'LOGOUT',
+    //       ),
+    //     ],
+    //   );
+    // } else {
+    //   setState(() {
+    //     const LoginSignupPage();
+    //   });
+    // }
     if (widget.view == 3 //&& user != null && user!.roleIds != null
         ) {
       return const Projects();
