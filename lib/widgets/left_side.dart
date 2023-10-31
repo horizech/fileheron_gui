@@ -1,7 +1,9 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fileheron_gui/constants.dart';
+import 'package:fileheron_gui/widgets/authentication/is_user_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
+import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
@@ -65,62 +67,81 @@ class _LeftSideState extends State<LeftSide> {
                   ),
                   GestureDetector(
                     onTap: (() {
-                      widget.callback!("1");
-                      setState(() {});
+                      setState(() {
+                        widget.callback!("1");
+                      });
                     }),
-                    child: const Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                          child: UpText(
-                            "Local Server",
-                            // style: TextStyle(
-                            //   color: Colors.white,
-                            //   fontWeight: FontWeight.bold,
-                            // ),
+                    child: const Padding(
+                      padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                      child: Row(
+                        children: [
+                          UpIcon(icon: Icons.settings_system_daydream),
+                          SizedBox(width: 6),
+                          UpText(
+                            "LOCAL SERVER",
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   GestureDetector(
                     onTap: (() {
-                      widget.callback!("2");
-                      setState(() {});
+                      setState(() {
+                        widget.callback!("3");
+                      });
                     }),
-                    child: const Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                          child: UpText(
-                            "Login",
+                    child: const Padding(
+                      padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                      child: Row(
+                        children: [
+                          UpIcon(icon: Icons.description),
+                          SizedBox(width: 6),
+                          UpText(
+                            "PROJECTS",
                             // style: TextStyle(
                             //   color: Colors.white,
                             //   fontWeight: FontWeight.bold,
                             // ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   GestureDetector(
                     onTap: (() {
-                      widget.callback!("3");
-                      setState(() {});
+                      setState(() {
+                        widget.callback!("2");
+                      });
                     }),
-                    child: const Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                          child: UpText(
-                            "Projects",
-                            // style: TextStyle(
-                            //   color: Colors.white,
-                            //   fontWeight: FontWeight.bold,
-                            // ),
-                          ),
-                        ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+                      child: Row(
+                        children: [
+                          isUserLogin()
+                              ? UpIcon(
+                                  icon: Icons.logout,
+                                  style: UpStyle(
+                                      iconColor: UpConfig.of(context)
+                                          .theme
+                                          .baseColor
+                                          .shade600),
+                                )
+                              : const UpIcon(
+                                  icon: Icons.login,
+                                ),
+                          const SizedBox(width: 6),
+                          isUserLogin()
+                              ? UpText(
+                                  "LOGOUT",
+                                  style: UpStyle(
+                                      textColor: UpConfig.of(context)
+                                          .theme
+                                          .baseColor
+                                          .shade600),
+                                )
+                              : const UpText("LOGIN"),
+                        ],
+                      ),
                     ),
                   ),
                 ],

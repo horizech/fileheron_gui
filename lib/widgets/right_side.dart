@@ -1,3 +1,4 @@
+import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
 import 'package:fileheron_gui/widgets/projects.dart';
 import 'package:fileheron_gui/widgets/window_buttons.dart';
@@ -25,6 +26,7 @@ class RightSide extends StatefulWidget {
 }
 
 class _RightSideState extends State<RightSide> {
+  User? user = Apiraiser.authentication.getCurrentUser();
   final _formKey = GlobalKey<FormState>();
   TextEditingController hostController =
       TextEditingController(text: "localhost");
@@ -548,12 +550,33 @@ class _RightSideState extends State<RightSide> {
           ),
         ),
       );
-    } else if (widget.view == 2) {
-      return const LoginSignupPage();
-    } else if (widget.view == 3) {
+    }
+    if (widget.view == 2 && user != null && user!.roleIds != null) {
+      setState(() {});
+      return Column(
+        children: [
+          const UpText("User Logged In"),
+          const SizedBox(height: 8),
+          UpButton(
+            onPressed: () {
+              setState(() {
+                Apiraiser.authentication.signOut();
+              });
+            },
+            text: 'LOGOUT',
+          ),
+        ],
+      );
+    } else {
+      setState(() {
+        const LoginSignupPage();
+      });
+    }
+    if (widget.view == 3 //&& user != null && user!.roleIds != null
+        ) {
       return const Projects();
     } else {
-      return const SizedBox();
+      return const LoginSignupPage();
     }
   }
 }
