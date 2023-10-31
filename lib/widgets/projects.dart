@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_text.dart';
-import 'package:archive/archive.dart';
+
 import 'package:flutter_up/widgets/up_textfield.dart';
 
 class Projects extends StatefulWidget {

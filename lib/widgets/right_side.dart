@@ -466,6 +466,9 @@ class _RightSideState extends State<RightSide> {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
+                                        backgroundColor: UpConfig.of(context)
+                                            .theme
+                                            .baseColor,
                                         title: const UpText('Service'),
                                         content: Row(
                                           crossAxisAlignment:
@@ -521,6 +524,8 @@ class _RightSideState extends State<RightSide> {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
+                                      backgroundColor:
+                                          UpConfig.of(context).theme.baseColor,
                                       title: const UpText('Service'),
                                       content: const UpText("Service Stoped"),
                                       actions: [
