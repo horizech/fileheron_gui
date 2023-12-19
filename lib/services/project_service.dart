@@ -1,9 +1,9 @@
 import 'package:apiraiser/apiraiser.dart';
-import 'package:fileheron_gui/models/project.dart';
+import 'package:fileheron_gui/apiraiser/models/project.dart';
 import 'package:flutter/foundation.dart';
 
 class ProjectDetailService {
-  static Future<Project?> getProjectById(int userID) async {
+  static Future<Project?> getProjectById(String userID) async {
     List<QuerySearchItem> projectConditions = [];
 
     Project? project;
@@ -16,8 +16,8 @@ class ProjectDetailService {
       )
     ];
     try {
-      APIResult result =
-          await Apiraiser.data.getByConditions("Projects", projectConditions);
+      APIResult result = await Apiraiser.data
+          .getByConditions("Fileheron_Projects", projectConditions);
 
       if (result.success &&
           result.data != null &&

@@ -4,6 +4,7 @@ import 'package:fileheron_gui/widgets/authentication/is_user_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/themes/up_style.dart';
+import 'package:flutter_up/themes/up_themes.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
@@ -17,6 +18,7 @@ class LeftSide extends StatefulWidget {
 }
 
 class _LeftSideState extends State<LeftSide> {
+  int selectedWidget = 1;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -69,15 +71,23 @@ class _LeftSideState extends State<LeftSide> {
                     onTap: (() {
                       setState(() {
                         widget.callback!("1");
+                        selectedWidget = 1;
                       });
                     }),
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
                       child: Row(
                         children: [
-                          UpIcon(icon: Icons.settings_system_daydream),
-                          SizedBox(width: 6),
-                          UpText(
+                          UpIcon(
+                            icon: Icons.settings_system_daydream,
+                            style: UpStyle(
+                                iconColor: selectedWidget == 1
+                                    ? UpConfig.of(context).theme.primaryColor
+                                    : UpThemes.getContrastColor(
+                                        UpConfig.of(context).theme.baseColor)),
+                          ),
+                          const SizedBox(width: 6),
+                          const UpText(
                             "LOCAL SERVER",
                           ),
                         ],
@@ -88,15 +98,23 @@ class _LeftSideState extends State<LeftSide> {
                     onTap: (() {
                       setState(() {
                         widget.callback!("3");
+                        selectedWidget = 3;
                       });
                     }),
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
                       child: Row(
                         children: [
-                          UpIcon(icon: Icons.description),
-                          SizedBox(width: 6),
-                          UpText(
+                          UpIcon(
+                            icon: Icons.description,
+                            style: UpStyle(
+                                iconColor: selectedWidget == 3
+                                    ? UpConfig.of(context).theme.primaryColor
+                                    : UpThemes.getContrastColor(
+                                        UpConfig.of(context).theme.baseColor)),
+                          ),
+                          const SizedBox(width: 6),
+                          const UpText(
                             "PROJECTS",
                             // style: TextStyle(
                             //   color: Colors.white,
@@ -112,17 +130,27 @@ class _LeftSideState extends State<LeftSide> {
                           onTap: (() {
                             setState(() {
                               widget.callback!("2");
+                              selectedWidget = 2;
                             });
                           }),
-                          child: const Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
                             child: Row(
                               children: [
                                 UpIcon(
                                   icon: Icons.login,
+                                  style: UpStyle(
+                                      iconColor: selectedWidget == 2
+                                          ? UpConfig.of(context)
+                                              .theme
+                                              .primaryColor
+                                          : UpThemes.getContrastColor(
+                                              UpConfig.of(context)
+                                                  .theme
+                                                  .baseColor)),
                                 ),
-                                SizedBox(width: 6),
-                                UpText("LOGIN"),
+                                const SizedBox(width: 6),
+                                const UpText("LOGIN"),
                               ],
                             ),
                           ),
@@ -133,6 +161,7 @@ class _LeftSideState extends State<LeftSide> {
                           onTap: (() {
                             setState(() {
                               widget.callback!("4");
+                              selectedWidget = 4;
                             });
                           }),
                           child: Padding(
@@ -142,10 +171,14 @@ class _LeftSideState extends State<LeftSide> {
                                 UpIcon(
                                   icon: Icons.logout,
                                   style: UpStyle(
-                                      iconColor: UpConfig.of(context)
-                                          .theme
-                                          .baseColor
-                                          .shade600),
+                                      iconColor: selectedWidget == 4
+                                          ? UpConfig.of(context)
+                                              .theme
+                                              .primaryColor
+                                          : UpConfig.of(context)
+                                              .theme
+                                              .baseColor
+                                              .shade600),
                                 ),
                                 const SizedBox(width: 6),
                                 UpText(

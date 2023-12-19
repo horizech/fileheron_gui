@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
       theme: UpThemes.generateThemeByColor(
           baseColor: const Color.fromARGB(255, 25, 23, 30),
           isDark: true,
-          primaryColor: Colors.red),
+          primaryColor: Colors.red.shade900),
       title: 'FileHeron',
     );
   }

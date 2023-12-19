@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    
+    {
+      "name": "Flutter (Windows)",
+      "program": "lib/main.dart",
+      "deviceId": "windows",
+      "request": "launch",
+      "type": "dart"
+    }
+  ]
+}

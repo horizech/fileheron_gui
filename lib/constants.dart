@@ -13,4 +13,13 @@ const String version = "v 1.1.0";
 class Constant {
   static const String authLogin = "Login";
   static const String authSignup = "Signup";
+  static const String routes = "Signup";
+}
+
+class Routes {
+  static const String index = "/";
+  static const String login = "/login";
+  static const String signup = "/signup";
+  static const String loginSignup = "/loginsignup";
+  static const String home = "/home";
 }

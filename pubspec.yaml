@@ -21,12 +21,17 @@ dependencies:
   cupertino_icons: ^1.0.2
   file_picker: ^5.0.1
   fileheron_server: ^1.0.4
-  flutter_up: ^3.0.3
-  bitsdojo_window: ^0.1.5
-  apiraiser: ^0.2.3
+  flutter_up:
+    path: ../flutter_up
+  # bitsdojo_window: ^0.1.5
+  # apiraiser: ^1.0.0
   archive: ^3.1.6
   equatable: ^2.0.3
-
+  apiraiser:
+    path: ../apiraiser_dart
+  flutter_secure_storage: ^9.0.0
+  bitsdojo_window:
+    path: ../bitsdojo_window-master/bitsdojo_window/
 dev_dependencies:
   flutter_test:
     sdk: flutter

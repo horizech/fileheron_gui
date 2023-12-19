@@ -1,6 +1,6 @@
 import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
-import 'package:fileheron_gui/widgets/projects.dart';
+import 'package:fileheron_gui/widgets/project_widget.dart';
 import 'package:fileheron_gui/widgets/window_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -17,6 +17,7 @@ import 'package:flutter_up/widgets/up_checkbox.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
 
+// ignore: must_be_immutable
 class RightSide extends StatefulWidget {
   int view;
   RightSide({Key? key, required this.view}) : super(key: key);
@@ -97,7 +98,7 @@ class _RightSideState extends State<RightSide> {
   onStop() {
     if (server != null) {
       server!.stop();
-      server!.destroy();
+      // server!.destroy();
       setState(() {
         isStart = false;
       });
@@ -208,7 +209,7 @@ class _RightSideState extends State<RightSide> {
                       width: 10,
                     ),
                     SizedBox(
-                      width: 100,
+                      width: 120,
                       child: UpButton(
                           style: UpStyle(
                             buttonBorderRadius: 2,
@@ -454,7 +455,7 @@ class _RightSideState extends State<RightSide> {
                       height: 40,
                       child: isStart == false
                           ? SizedBox(
-                              width: 100,
+                              width: 120,
                               child: UpButton(
                                 style: UpStyle(
                                     buttonBorderRadius: 2,
@@ -494,7 +495,7 @@ class _RightSideState extends State<RightSide> {
                                         ),
                                         actions: [
                                           SizedBox(
-                                            width: 100,
+                                            width: 120,
                                             child: UpButton(
                                                 style: UpStyle(
                                                   buttonBorderRadius: 2,
@@ -513,7 +514,7 @@ class _RightSideState extends State<RightSide> {
                               ),
                             )
                           : SizedBox(
-                              width: 100,
+                              width: 120,
                               child: UpButton(
                                 style: UpStyle(
                                   buttonBorderRadius: 2,
