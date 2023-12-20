@@ -42,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
             completerId: loadingDialogCompleterId,
             result: null);
       }
+      setState(() {});
 
       _handleLoginResult(result);
     } else {
@@ -52,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleLoginResult(APIResult result) {
     if (result.success) {
-      // _saveSession(result);
+      
       setState(() {
         const HomePage();
       });

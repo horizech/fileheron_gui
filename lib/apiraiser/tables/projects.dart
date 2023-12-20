@@ -12,7 +12,7 @@ class ProjectTable {
       foreignTable: "",
     ),
     const ColumnInfo(
-      name: "Path",
+      name: "Description",
       datatype: ColumnDataType.longText,
       isRequired: true,
       isUnique: false,

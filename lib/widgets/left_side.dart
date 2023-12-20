@@ -19,12 +19,18 @@ class LeftSide extends StatefulWidget {
 
 class _LeftSideState extends State<LeftSide> {
   int selectedWidget = 1;
+  bool showContent = true;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200,
+    return Container(
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+      width: 250,
       child: Container(
-        color: UpConfig.of(context).theme.baseColor.shade50,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: UpConfig.of(context).theme.baseColor.shade100,
+        ),
         child: Column(
           children: [
             WindowTitleBarBox(
@@ -33,8 +39,9 @@ class _LeftSideState extends State<LeftSide> {
                   Expanded(
                     child: MoveWindow(),
                   ),
-                  const UpText(
+                  UpText(
                     "FileHeron",
+                    style: UpStyle(textSize: 20, textWeight: FontWeight.bold),
                   ),
                   Expanded(
                     child: MoveWindow(),
@@ -44,87 +51,164 @@ class _LeftSideState extends State<LeftSide> {
             ),
             Divider(
               thickness: 1,
-              color: UpConfig.of(context).theme.baseColor.shade200,
+              color: UpConfig.of(context).theme.baseColor.shade300,
             ),
             Expanded(
               child: Column(
                 children: [
-                  const Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          child: UpText(
-                            "Server",
-                            // style: TextStyle(
-                            //   color: Colors.white,
-                            // ),
-                          ),
+                  GestureDetector(
+                      onTap: () {
+                        if (showContent) {
+                          setState(() {
+                            showContent = false;
+                          });
+                        } else {
+                          setState(() {
+                            showContent = true;
+                          });
+                        }
+                      },
+                      child: Container(
+                        color: UpConfig.of(context).theme.baseColor.shade100,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                child: UpText(
+                                  "Server",
+                                  style: UpStyle(
+                                      textSize: 17,
+                                      textWeight: FontWeight.bold,
+                                      textColor: UpConfig.of(context)
+                                          .theme
+                                          .baseColor
+                                          .shade800),
+                                ),
+                              ),
+                            ),
+                            UpIcon(
+                              icon: !showContent
+                                  ? Icons.arrow_drop_down
+                                  : Icons.arrow_drop_up,
+                              style: UpStyle(
+                                  iconSize: 18,
+                                  iconColor: UpConfig.of(context)
+                                      .theme
+                                      .baseColor
+                                      .shade800),
+                            ),
+                          ],
+                        ),
+                      )),
+                  Visibility(
+                    visible: showContent,
+                    child: GestureDetector(
+                      onTap: (() {
+                        setState(() {
+                          widget.callback!("1");
+                          selectedWidget = 1;
+                        });
+                      }),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+                        child: Row(
+                          children: [
+                            UpIcon(
+                              icon: Icons.settings_system_daydream,
+                              style: UpStyle(
+                                  iconColor: selectedWidget == 1
+                                      ? UpConfig.of(context).theme.primaryColor
+                                      : UpConfig.of(context)
+                                          .theme
+                                          .baseColor
+                                          .shade900),
+                            ),
+                            const SizedBox(width: 6),
+                            UpText("LOCAL SERVER",
+                                style: UpStyle(
+                                    textColor: UpConfig.of(context)
+                                        .theme
+                                        .baseColor
+                                        .shade800)),
+                          ],
                         ),
                       ),
-                      UpIcon(
-                        icon: Icons.arrow_drop_down,
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: (() {
-                      setState(() {
-                        widget.callback!("1");
-                        selectedWidget = 1;
-                      });
-                    }),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                      child: Row(
-                        children: [
-                          UpIcon(
-                            icon: Icons.settings_system_daydream,
-                            style: UpStyle(
-                                iconColor: selectedWidget == 1
-                                    ? UpConfig.of(context).theme.primaryColor
-                                    : UpThemes.getContrastColor(
-                                        UpConfig.of(context).theme.baseColor)),
-                          ),
-                          const SizedBox(width: 6),
-                          const UpText(
-                            "LOCAL SERVER",
-                          ),
-                        ],
-                      ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (() {
-                      setState(() {
-                        widget.callback!("3");
-                        selectedWidget = 3;
-                      });
-                    }),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                      child: Row(
+                  Visibility(
+                      visible: showContent,
+                      child: Column(
                         children: [
-                          UpIcon(
-                            icon: Icons.description,
-                            style: UpStyle(
-                                iconColor: selectedWidget == 3
-                                    ? UpConfig.of(context).theme.primaryColor
-                                    : UpThemes.getContrastColor(
-                                        UpConfig.of(context).theme.baseColor)),
-                          ),
-                          const SizedBox(width: 6),
-                          const UpText(
-                            "PROJECTS",
-                            // style: TextStyle(
-                            //   color: Colors.white,
-                            //   fontWeight: FontWeight.bold,
-                            // ),
-                          ),
+                          !isUserLogin()
+                              ? GestureDetector(
+                                  onTap: (() {}),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 8, 0, 8),
+                                    child: Row(
+                                      children: [
+                                        UpIcon(
+                                          icon: Icons.description,
+                                          style: UpStyle(
+                                              iconColor: UpConfig.of(context)
+                                                  .theme
+                                                  .baseColor
+                                                  .shade500),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        UpText(
+                                          "PROJECTS",
+                                          style: UpStyle(
+                                              textColor: UpConfig.of(context)
+                                                  .theme
+                                                  .baseColor
+                                                  .shade500),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          isUserLogin()
+                              ? GestureDetector(
+                                  onTap: (() {
+                                    setState(() {
+                                      widget.callback!("3");
+                                      selectedWidget = 3;
+                                    });
+                                  }),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 8, 0, 8),
+                                    child: Row(
+                                      children: [
+                                        UpIcon(
+                                          icon: Icons.description,
+                                          style: UpStyle(
+                                              iconColor: selectedWidget == 3
+                                                  ? UpConfig.of(context)
+                                                      .theme
+                                                      .primaryColor
+                                                  : UpConfig.of(context)
+                                                      .theme
+                                                      .baseColor
+                                                      .shade800),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        UpText("PROJECTS",
+                                            style: UpStyle(
+                                                textColor: UpConfig.of(context)
+                                                    .theme
+                                                    .baseColor
+                                                    .shade800)),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
                         ],
-                      ),
-                    ),
-                  ),
+                      )),
                   !isUserLogin()
                       ? GestureDetector(
                           onTap: (() {
@@ -144,20 +228,23 @@ class _LeftSideState extends State<LeftSide> {
                                           ? UpConfig.of(context)
                                               .theme
                                               .primaryColor
-                                          : UpThemes.getContrastColor(
-                                              UpConfig.of(context)
-                                                  .theme
-                                                  .baseColor)),
+                                          : UpConfig.of(context)
+                                              .theme
+                                              .baseColor
+                                              .shade800),
                                 ),
                                 const SizedBox(width: 6),
-                                const UpText("LOGIN"),
+                                UpText("LOGIN",
+                                    style: UpStyle(
+                                        textColor: UpConfig.of(context)
+                                            .theme
+                                            .baseColor
+                                            .shade800)),
                               ],
                             ),
                           ),
                         )
-                      : const SizedBox(),
-                  isUserLogin()
-                      ? GestureDetector(
+                      : GestureDetector(
                           onTap: (() {
                             setState(() {
                               widget.callback!("4");
@@ -178,7 +265,7 @@ class _LeftSideState extends State<LeftSide> {
                                           : UpConfig.of(context)
                                               .theme
                                               .baseColor
-                                              .shade600),
+                                              .shade500),
                                 ),
                                 const SizedBox(width: 6),
                                 UpText(
@@ -187,13 +274,12 @@ class _LeftSideState extends State<LeftSide> {
                                       textColor: UpConfig.of(context)
                                           .theme
                                           .baseColor
-                                          .shade600),
+                                          .shade500),
                                 ),
                               ],
                             ),
                           ),
-                        )
-                      : const SizedBox(),
+                        ),
                 ],
               ),
             ),

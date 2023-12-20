@@ -1,5 +1,6 @@
 import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
+import 'package:fileheron_gui/widgets/authentication/logout.dart';
 import 'package:fileheron_gui/widgets/project_widget.dart';
 import 'package:fileheron_gui/widgets/window_buttons.dart';
 import 'package:flutter/material.dart';
@@ -551,7 +552,7 @@ class _RightSideState extends State<RightSide> {
                               ),
                             )),
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -561,20 +562,7 @@ class _RightSideState extends State<RightSide> {
       return const LoginSignupPage();
     }
     if (widget.view == 4) {
-      return Column(
-        children: [
-          const UpText("User Logged In"),
-          const SizedBox(height: 8),
-          UpButton(
-            onPressed: () {
-              setState(() {
-                Apiraiser.authentication.signOut();
-              });
-            },
-            text: 'LOGOUT',
-          ),
-        ],
-      );
+      return const Logout();
     }
 
     // if (widget.view == 2 && user != null && user!.roleIds != null) {

@@ -14,12 +14,12 @@ class ProjectsEntryListTileWidget extends StatelessWidget {
 
   final int resultsPerpage = 8;
 
-  const ProjectsEntryListTileWidget(
-      {Key? key,
-      required this.document,
-      required this.itemClicked,
-      required this.onDelete,})
-      : super(key: key);
+  const ProjectsEntryListTileWidget({
+    Key? key,
+    required this.document,
+    required this.itemClicked,
+    required this.onDelete,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +37,11 @@ class ProjectsEntryListTileWidget extends StatelessWidget {
                   textWeight: UpLayout.isPortrait(context)
                       ? FontWeight.normal
                       : FontWeight.w500)),
-          subtitle: UpText(document.path),
+          subtitle: UpText(document.description ?? ""),
           leading: SizedBox(
             width: 50,
             child: UpIcon(
-              icon: document.path.contains(".zip")
-                  ? Icons.folder_zip
-                  : Icons.folder,
+              icon: Icons.folder_zip,
               style: UpStyle(iconSize: 40),
             ),
           ),
@@ -58,9 +56,8 @@ class ProjectsEntryListTileWidget extends StatelessWidget {
                 onPressed: () => onDelete(document),
               ),
               IconButton(
-                icon: UpIcon(
-                  icon: Icons.play_arrow,
-                  style: UpStyle(iconColor: Colors.greenAccent.shade700),
+                icon: const UpIcon(
+                  icon: Icons.open_in_new,
                 ),
                 onPressed: () {},
               ),

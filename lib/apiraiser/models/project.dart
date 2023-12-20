@@ -7,13 +7,13 @@ class Project {
   DateTime? lastUpdatedOn;
   String? lastUpdatedBy;
   String name;
-  String path;
+  String? description;
 
   // final int? media;
 
   Project({
     required this.name,
-    required this.path,
+    this.description,
     this.id,
     this.createdOn,
     this.createdBy,
@@ -22,7 +22,7 @@ class Project {
   });
   factory Project.empty() {
     Project project = Project(
-        id: null, name: "", path: "", createdBy: null, lastUpdatedBy: null);
+        id: null, name: "", description: "", createdBy: null, lastUpdatedBy: null);
     return project;
   }
 
@@ -43,7 +43,7 @@ class Project {
             : null,
         lastUpdatedBy: json['LastUpdatedBy'] as String?,
         name: json['Name'] as String,
-        path: json['Path'] as String,
+        description: json['Description'] as String,
       );
       // const []);
       return project;
@@ -57,7 +57,7 @@ class Project {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Name'] = name;
     data['Id'] = id;
-    data['Path'] = path;
+    data['Description'] = description;
 
     return data;
   }

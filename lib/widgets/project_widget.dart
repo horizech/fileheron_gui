@@ -20,6 +20,8 @@ import 'package:flutter_up/services/up_dialog.dart';
 import 'package:flutter_up/services/up_search.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_button.dart';
+import 'package:flutter_up/widgets/up_circualar_progress.dart';
+import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_search.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
@@ -34,10 +36,10 @@ class Projects extends StatefulWidget {
 class _ProjectsState extends State<Projects> {
   final TextEditingController _searchTextEditingController =
       TextEditingController();
-  TextEditingController projectController = TextEditingController();
+  TextEditingController projectPathController = TextEditingController();
   TextEditingController projectNameController = TextEditingController();
+  TextEditingController projectDescriptionController = TextEditingController();
   List<UpLabelValuePair> projectDropDown = [];
-  bool zipingFile = false;
   bool uploadingFile = false;
   bool isZipFile = false;
   // List<Project> projectList = [];
@@ -54,17 +56,24 @@ class _ProjectsState extends State<Projects> {
     }
   }
 
-  convertToZip(String fileName, String filePath) async {
+  convertToZip(String fileName, String filePath, String description) async {
     String? storageID;
     String projectID;
     checkZipFile(filePath);
-    try {
+    Project project = Project(name: fileName, description: description);
+    APIResult? result =
+        await Apiraiser.data.insert("Fileheron_Projects", project.toJson());
+
+    if (result.success) {
+      uploadingFile = true;
+      projectID = result.data;
+      _loading();
       if (!isZipFile) {
         Directory appDocDirectory = Directory.systemTemp.absolute;
         filePath = "${appDocDirectory.path}\\$fileName.zip";
         var encoder = ZipFileEncoder();
         encoder.create(filePath);
-        Directory sourceDir = Directory(projectController.text.toString());
+        Directory sourceDir = Directory(projectPathController.text.toString());
         final List<FileSystemEntity> entities = await sourceDir.list().toList();
         final Iterable<File> sourceFiles = entities.whereType<File>();
         for (var file in sourceFiles) {
@@ -72,46 +81,45 @@ class _ProjectsState extends State<Projects> {
         }
         encoder.close();
       }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    File file = await File(filePath).create();
-    await file.readAsBytes().then((Uint8List list) async {
-      APIResult? result = await Apiraiser.storage.upload(
-        StorageUploadRequest(
-          file: list,
-          path: filePath,
-          fileName: filePath.split("\\").last.toString(),
-        ),
-      );
-      storageID = result?.data;
-      // ignore: use_build_context_synchronously
-      UpToast().showToast(context: context, text: result!.message.toString());
-      return null;
-    });
 
-    Project project = Project(name: fileName, path: "");
-    APIResult? result =
-        await Apiraiser.data.insert("Fileheron_Projects", project.toJson());
-    // APIResult result =
-    //     AddProject().addProject(zipFilePath.split("\\").last, zipFilePath);
-    projectID = result.data;
-    var storage = Storage(projectID: projectID, storageID: storageID ?? "");
-    APIResult? result2 = await Apiraiser.data
-        .insert("Fileheron_Project_Storage", storage.toJson());
-    reloadData();
-    UpToast().showToast(context: context, text: result2.message.toString());
-    setState(() {});
+      File file = await File(filePath).create();
+      await file.readAsBytes().then((Uint8List list) async {
+        APIResult? result = await Apiraiser.storage.upload(
+          StorageUploadRequest(
+            file: list,
+            path: filePath,
+            fileName: filePath.split("\\").last.toString(),
+          ),
+        );
+        storageID = result?.data;
+      });
+
+      // APIResult result =
+      //     AddProject().addProject(zipFilePath.split("\\").last, zipFilePath);
+
+      var storage = Storage(projectID: projectID, storageID: storageID ?? "");
+      APIResult? result2 = await Apiraiser.data
+          .insert("Fileheron_Project_Storage", storage.toJson());
+      UpToast().showToast(context: context, text: result2.message.toString());
+      reloadData();
+      setState(() {});
+      Navigator.pop(context);
+      uploadingFile = false;
+    } else {
+      UpToast().showToast(context: context, text: "Project Name Already Taken");
+      _addProject();
+    }
   }
 
   reloadData() {
     projectBloc.getProjects();
   }
 
-  _delete(project, context) async {
+  _delete(project) async {
     APIResult result = await projectBloc.deleteProject(project.id);
+    result.message;
     if (result.success) {
-      Navigator.pop(context);
+      _loading();
       List<QuerySearchItem> conditions = [];
       Storage projectStorage;
       conditions = [
@@ -129,73 +137,74 @@ class _ProjectsState extends State<Projects> {
             .first;
         APIResult result = await Apiraiser.data
             .delete("Fileheron_Project_Storage", projectStorage.id ?? "");
-        APIResult result2 =
-            await Apiraiser.data.delete("Storage", projectStorage.storageID);
-        result.data;
-        result2.data;
-        UpToast().showToast(context: context, text: result2.message.toString());
+        APIResult result3 =
+            await Apiraiser.storage.delete(projectStorage.storageID);
+        result.message;
+        result3.message;
+        UpToast().showToast(context: context, text: result.message.toString());
       }
       reloadData();
       setState(() {});
+      Navigator.pop(context);
     } else {}
   }
 
-  _update(Project project, context) async {
-    List<QuerySearchItem> conditions = [];
-    Storage projectStorage;
-    conditions = [
-      QuerySearchItem(
-          name: "ProjectID",
-          condition: ColumnCondition.equal,
-          value: project.id)
-    ];
-    APIResult? result = await Apiraiser.data
-        .getByConditions("Fileheron_Project_Storage", conditions);
-    if (result.success && result.message != "Nothing found!") {
-      projectStorage = (result.data as List<dynamic>)
-          .map((k) => Storage.fromJson(k as Map<String, dynamic>))
-          .first;
-      if (projectStorage.storageID.isNotEmpty) {
-        File file = await File(project.path).create();
-        await file.readAsBytes().then((Uint8List list) async {
-          APIResult? result = await Apiraiser.storage.update(
-            projectStorage.storageID,
-            StorageUploadRequest(
-              file: list,
-              path: project.path,
-              fileName: "${project.path.split("\\").last}UpDated",
-            ),
-          );
-          UpToast()
-              .showToast(context: context, text: result!.message.toString());
-          return null;
-        });
-      }
-    } else {
-      File file = await File(project.path).create();
-      await file.readAsBytes().then((Uint8List list) async {
-        APIResult? result = await Apiraiser.storage.upload(
-          StorageUploadRequest(
-            file: list,
-            path: project.path,
-            fileName: project.path.split("\\").last.toString(),
-          ),
-        );
+  // _update(Project project, context) async {
+  //   List<QuerySearchItem> conditions = [];
+  //   Storage projectStorage;
+  //   conditions = [
+  //     QuerySearchItem(
+  //         name: "ProjectID",
+  //         condition: ColumnCondition.equal,
+  //         value: project.id)
+  //   ];
+  //   APIResult? result = await Apiraiser.data
+  //       .getByConditions("Fileheron_Project_Storage", conditions);
+  //   if (result.success && result.message != "Nothing found!") {
+  //     projectStorage = (result.data as List<dynamic>)
+  //         .map((k) => Storage.fromJson(k as Map<String, dynamic>))
+  //         .first;
+  //     if (projectStorage.storageID.isNotEmpty) {
+  //       File file = await File(project.path).create();
+  //       await file.readAsBytes().then((Uint8List list) async {
+  //         APIResult? result = await Apiraiser.storage.update(
+  //           projectStorage.storageID,
+  //           StorageUploadRequest(
+  //             file: list,
+  //             path: project.path,
+  //             fileName: "${project.path.split("\\").last}UpDated",
+  //           ),
+  //         );
+  //         UpToast()
+  //             .showToast(context: context, text: result!.message.toString());
+  //         return null;
+  //       });
+  //     }
+  //   } else {
+  //     File file = await File(project.path).create();
+  //     await file.readAsBytes().then((Uint8List list) async {
+  //       APIResult? result = await Apiraiser.storage.upload(
+  //         StorageUploadRequest(
+  //           file: list,
+  //           path: project.path,
+  //           fileName: project.path.split("\\").last.toString(),
+  //         ),
+  //       );
 
-        var storage =
-            Storage(projectID: project.id ?? "", storageID: result?.data ?? "");
-        if (result!.success) {
-          APIResult? result2 = await Apiraiser.data
-              .insert("Fileheron_Project_Storage", storage.toJson());
-          reloadData();
-          UpToast()
-              .showToast(context: context, text: result2.message.toString());
-          setState(() {});
-        } else {}
-        return null;
-      });
-    }
-  }
+  //       var storage =
+  //           Storage(projectID: project.id ?? "", storageID: result?.data ?? "");
+  //       if (result!.success) {
+  //         APIResult? result2 = await Apiraiser.data
+  //             .insert("Fileheron_Project_Storage", storage.toJson());
+  //         reloadData();
+  //         UpToast()
+  //             .showToast(context: context, text: result2.message.toString());
+  //         setState(() {});
+  //       } else {}
+  //       return null;
+  //     });
+  //   }
+  // }
 
   List<Project> _getFilteredList(List<Project> documents) {
     List<Project> result = [];
@@ -205,7 +214,7 @@ class _ProjectsState extends State<Projects> {
         result = documents
             .where((x) =>
                 x.name.toLowerCase().contains(text) ||
-                (x.path).toLowerCase().contains(text))
+                (x.description)!.toLowerCase().contains(text))
             .toList();
       } else {
         result = documents.toList();
@@ -214,66 +223,123 @@ class _ProjectsState extends State<Projects> {
     return result;
   }
 
+  _loading() async {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.transparent,
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const UpCircularProgress(),
+                const SizedBox(height: 8),
+                uploadingFile
+                    ? const UpText("Uploading Project...")
+                    : const UpText("Deleting Project..."),
+              ],
+            ),
+          );
+        });
+  }
+
   _addProject() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: UpConfig.of(context).theme.baseColor.shade50,
-            title: const UpText("Add Project"),
-            content: Column(
-              children: [
-                UpTextField(
-                  label: "Project Name",
-                  controller: projectNameController,
-                ),
-                UpTextField(
-                  label: "Description",
-                  controller: projectNameController,
-                ),
-                const UpText("Add Project Folder or ZIP File"),
-                UpButton(
-                    text: "ADD Folder",
-                    onPressed: () async {
-                      {
-                        String? result =
-                            await FilePicker.platform.getDirectoryPath();
-                        if (result != null && result.isNotEmpty) {
-                          setState(() {
-                            projectController.text = result;
-                          });
-                        }
-                      }
-                    }),
-                UpButton(
-                    text: "ADD ZIP File",
-                    onPressed: () async {
-                      PlatformFile? file;
-                      {
-                        FilePickerResult? result = await FilePicker.platform
-                            .pickFiles(allowedExtensions: [".zip"]);
-                        if (result != null) {
-                          file = result.files.first;
-                          if (file.path!.isNotEmpty) {
-                            projectController.text = file.path ?? "";
-                          }
-                        }
-                      }
-                    }),
-              ],
+            title: UpText(
+              "Add Project",
+              style: UpStyle(textSize: 20, textWeight: FontWeight.bold),
+            ),
+            content: SizedBox(
+              width: 400,
+              height: 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  UpTextField(
+                    label: "Project Name",
+                    controller: projectNameController,
+                  ),
+                  const SizedBox(height: 12),
+                  UpTextField(
+                    label: "Description",
+                    controller: projectDescriptionController,
+                  ),
+                  const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: UpText("Add Project Folder or ZIP File")),
+                  Center(
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      runSpacing: 8,
+                      spacing: 8,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 40,
+                          child: UpButton(
+                              text: "Folder",
+                              onPressed: () async {
+                                {
+                                  String? result = await FilePicker.platform
+                                      .getDirectoryPath();
+                                  if (result != null && result.isNotEmpty) {
+                                    setState(() {
+                                      projectPathController.text = result;
+                                    });
+                                  }
+                                }
+                              }),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          height: 40,
+                          child: UpButton(
+                              text: "ZIP File",
+                              onPressed: () async {
+                                PlatformFile? file;
+                                {
+                                  FilePickerResult? result = await FilePicker
+                                      .platform
+                                      .pickFiles(allowedExtensions: [".zip"]);
+                                  if (result != null) {
+                                    file = result.files.first;
+                                    if (file.path!.isNotEmpty) {
+                                      projectPathController.text =
+                                          file.path ?? "";
+                                    }
+                                  }
+                                }
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             actions: [
               UpButton(
                 text: "CANCEL",
-                onPressed: () {},
+                style: UpStyle(buttonTextWeight: FontWeight.bold),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
               UpButton(
                 text: "CONFIRM",
+                style: UpStyle(buttonTextWeight: FontWeight.bold),
                 onPressed: () async {
                   // await checkZipFile(projectNameController.text);
+                  Navigator.pop(context);
                   await convertToZip(
                     projectNameController.text,
-                    projectController.text,
+                    projectPathController.text,
+                    projectDescriptionController.text,
                   );
                   setState(() {
                     reloadData();
@@ -326,7 +392,8 @@ class _ProjectsState extends State<Projects> {
         child: UpButton(
           text: "Yes",
           onPressed: () {
-            _delete(model, context);
+            Navigator.pop(context);
+            _delete(model);
           },
           style: UpStyle(
               buttonBackgroundColor: UpConfig.of(context).theme.primaryColor),
@@ -372,8 +439,18 @@ class _ProjectsState extends State<Projects> {
             stream: projectBloc.stream$,
             builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Text("Loading"),
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 2 - 35),
+                    child: const Column(
+                      children: [
+                        UpCircularProgress(),
+                        SizedBox(height: 8),
+                        UpText("Loading...")
+                      ],
+                    ),
+                  ),
                 );
               } else {
                 return StreamBuilder(
@@ -388,101 +465,42 @@ class _ProjectsState extends State<Projects> {
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // const Padding(
-                            //   padding: EdgeInsets.only(left: 8.0),
-                            //   child: UpText("Your Projects: "),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: Row(
-                            //     mainAxisAlignment:
-                            //         MainAxisAlignment.spaceBetween,
-                            //     children: [
-                            //       SizedBox(
-                            //         width: 400,
-                            //         child: UpDropDown(
-                            //           label: 'Projects',
-                            //           itemList: projectDropDown,
-                            //           value: dropDownValue,
-                            //           onChanged: ((value) {
-                            //             dropDownValue = value ?? "";
-                            //           }),
-                            //         ),
-                            //       ),
-                            //       Container(
-                            //         decoration: BoxDecoration(
-                            //           borderRadius: BorderRadius.circular(8),
-                            //         ),
-                            //         height: 45,
-                            //         width: 45,
-                            //         child: UpButton(
-                            //           onPressed: () async {
-                            //             String? result = await FilePicker
-                            //                 .platform
-                            //                 .getDirectoryPath(
-                            //                     // allowMultiple: false,
-                            //                     // type: FileType.up,
-                            //                     // allowedExtensions: ['jpg', 'pdf', 'doc'],
-                            //                     );
-                            //             if (result != null &&
-                            //                 result.isNotEmpty) {
-                            //               setState(() {
-                            //                 projectfile = result;
-                            //                 projectController.text = result;
-                            //               });
-                            //             }
-                            //           },
-                            //           icon: Icons.add,
-                            //           style: UpStyle(),
-                            //         ),
-                            //       )
-                            //     ],
-                            //   ),
-                            // ),
                             const SizedBox(height: 16),
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  child: UpButton(
-                                      style: UpStyle(
-                                        buttonBorderRadius: 2,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  width: 400,
+                                  child: UpSearch(
+                                    style: UpStyle(),
+                                    controller: _searchTextEditingController,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 16),
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: UpConfig.of(context)
+                                            .theme
+                                            .primaryColor,
+                                        shape: BoxShape.circle),
+                                    child: IconButton(
+                                      icon: const UpIcon(
+                                        icon: Icons.add,
                                       ),
                                       onPressed: () async {
                                         _addProject();
                                       },
-                                      // onPressed: () {
-                                      //   convertToZip();
-                                      //   setState(() {
-                                      //     reloadData();
-                                      //   });
-                                      // },
-                                      text: "Add a new PROJECT"),
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: UpText("Your Projects"),
-                                ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width * .3,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: UpSearch(
-                                      style: UpStyle(),
-                                      controller: _searchTextEditingController,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 16),
                             SizedBox(
-                              height: 600,
+                              height: 400,
                               width: MediaQuery.of(context).size.width * 0.75,
                               child: ProjectsListWidget(
                                 list: filteredDocuments,

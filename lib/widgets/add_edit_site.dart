@@ -43,14 +43,14 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
     super.initState();
 
     _nameTextEditingController.text = widget.document.name;
-    _descriptionTextEditingController.text = widget.document.path;
+    _descriptionTextEditingController.text = widget.document.description ?? "";
   }
 
   _saveSite() async {
     if (_formKey.currentState!.validate()) {
       Project project = Project(
         name: _nameTextEditingController.text,
-        path: _descriptionTextEditingController.text,
+        description: _descriptionTextEditingController.text,
       );
       APIResult result;
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fileheron_gui/widgets/left_side.dart';
 import 'package:fileheron_gui/widgets/right_side.dart';
+import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/models/up_route.dart';
 import 'package:flutter_up/models/up_router_state.dart';
 import 'package:flutter_up/themes/up_themes.dart';
@@ -27,7 +28,8 @@ class _MyAppState extends State<MyApp> {
         )
       ],
       theme: UpThemes.generateThemeByColor(
-          baseColor: const Color.fromARGB(255, 25, 23, 30),
+          // baseColor: const Color.fromARGB(255, 25, 23, 30),
+          baseColor: Colors.black,
           isDark: true,
           primaryColor: Colors.red.shade900),
       title: 'FileHeron',
@@ -54,20 +56,27 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: WindowBorder(
-        width: 1,
-        color: Colors.black,
-        child: Row(children: [
-          LeftSide(
-            view: "",
-            callback: callback,
-          ),
-          Expanded(
-            child: RightSide(
-              view: int.parse(view),
-            ),
-          ),
-        ]),
-      ),
+          width: 1,
+          color: Colors.black,
+          child: Container(
+            color: UpConfig.of(context).theme.baseColor,
+            child: Row(children: [
+              Padding(
+                padding: EdgeInsets.all(6),
+                child: Container(
+                  child: LeftSide(
+                    view: "",
+                    callback: callback,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: RightSide(
+                  view: int.parse(view),
+                ),
+              ),
+            ]),
+          )),
     );
   }
 }
