@@ -1,7 +1,6 @@
 import 'dart:async';
-
+// ignore: depend_on_referenced_packages
 import 'package:rxdart/subjects.dart';
-// import 'package:rxdart/rxdart.dart';
 
 class KeyService {
   final seconds = const Duration(seconds: 1);
@@ -31,9 +30,9 @@ class KeyService {
 
   int getElapsedTime() {
     if (_startTime != null && _endTime != null) {
-      DateTime _curTime = DateTime.now();
-      if (_curTime.isAfter(_startTime!)) {
-        Duration difference = _curTime.difference(_startTime!);
+      DateTime curTime = DateTime.now();
+      if (curTime.isAfter(_startTime!)) {
+        Duration difference = curTime.difference(_startTime!);
         return difference.inSeconds;
       }
     }
@@ -42,9 +41,9 @@ class KeyService {
 
   int getRemainingTime() {
     if (_startTime != null && _endTime != null) {
-      DateTime _curTime = DateTime.now();
-      if (_curTime.isBefore(_endTime!)) {
-        Duration difference = _endTime!.difference(_curTime);
+      DateTime curTime = DateTime.now();
+      if (curTime.isBefore(_endTime!)) {
+        Duration difference = _endTime!.difference(curTime);
         return difference.inSeconds;
       }
     }

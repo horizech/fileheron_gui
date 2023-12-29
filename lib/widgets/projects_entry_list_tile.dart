@@ -1,5 +1,6 @@
 import 'package:fileheron_gui/apiraiser/models/project.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_up/config/up_config.dart';
 // import 'package:flutter/material.dart';
 import 'package:flutter_up/helpers/up_layout.dart';
 import 'package:flutter_up/themes/up_style.dart';
@@ -27,6 +28,7 @@ class ProjectsEntryListTileWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: UpCard(
         style: UpStyle(
+            cardBodyColor: UpConfig.of(context).theme.baseColor.shade100,
             cardWidth: MediaQuery.of(context).size.width,
             cardBodyPadding: false),
         body: ListTile(
@@ -54,12 +56,6 @@ class ProjectsEntryListTileWidget extends StatelessWidget {
                   style: UpStyle(),
                 ),
                 onPressed: () => onDelete(document),
-              ),
-              IconButton(
-                icon: const UpIcon(
-                  icon: Icons.open_in_new,
-                ),
-                onPressed: () {},
               ),
             ],
           ),

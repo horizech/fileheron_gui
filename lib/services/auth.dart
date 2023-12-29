@@ -4,6 +4,7 @@ import 'package:fileheron_gui/apiraiser/blocs/user.dart';
 import 'package:fileheron_gui/apiraiser/models/login_response.dart';
 import 'package:fileheron_gui/services/key.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// ignore: depend_on_referenced_packages
 import 'package:rxdart/subjects.dart';
 import 'package:flutter_up/locator.dart';
 

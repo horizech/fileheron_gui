@@ -20,5 +20,14 @@ class ProjectTable {
       foreignName: "",
       foreignTable: "",
     ),
+    const ColumnInfo(
+      name: "Deployed",
+      datatype: ColumnDataType.boolean,
+      isRequired: false,
+      isUnique: false,
+      isForeignKey: false,
+      foreignName: "",
+      foreignTable: "",
+    ),
   ]);
 }

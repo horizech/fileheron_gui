@@ -1,15 +1,17 @@
 import 'package:fileheron_gui/widgets/authentication/login.dart';
 import 'package:fileheron_gui/widgets/authentication/signup.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/helpers/up_layout.dart';
+import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_card.dart';
+import 'package:flutter_up/widgets/up_text.dart';
 
 import '../../constants.dart';
 
 class LoginSignupPage extends StatefulWidget {
-  const LoginSignupPage({super.key});
+  final Function(String)? callback;
+  const LoginSignupPage({super.key, required this.callback});
 
   @override
   State<LoginSignupPage> createState() => _LoginSignupPageState();
@@ -40,12 +42,83 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: UpCard(
+          style: UpStyle(cardWidth: 400),
           body: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                        color: UpConfig.of(context).theme.baseColor,
+                        shape: BoxShape.circle),
+                    child: Image.asset("assets/app_icon.png"),
+                  ),
+                  const SizedBox(width: 8),
+                  UpText(
+                    "FileHeron",
+                    style: UpStyle(textSize: 20, textWeight: FontWeight.bold),
+                  )
+                ]),
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                GestureDetector(
+                  onTap: () {
+                    _gotoLogin();
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                  color: _mode == Constant.authLogin
+                                      ? UpConfig.of(context).theme.primaryColor
+                                      : Colors.transparent,
+                                  width: 2))),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: UpText(
+                          "LOGIN",
+                          style: UpStyle(
+                              textSize: 17,
+                              textWeight: FontWeight.bold,
+                              textColor: UpConfig.of(context)
+                                  .theme
+                                  .baseColor
+                                  .shade800),
+                        ),
+                      )),
+                ),
+                const SizedBox(width: 22),
+                GestureDetector(
+                  onTap: () {
+                    _gotoSignup();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                color: _mode != Constant.authLogin
+                                    ? UpConfig.of(context).theme.primaryColor
+                                    : Colors.transparent,
+                                width: 2))),
+                    child: UpText(
+                      "SIGNUP",
+                      style: UpStyle(
+                          textSize: 17,
+                          textWeight: FontWeight.bold,
+                          textColor:
+                              UpConfig.of(context).theme.baseColor.shade800),
+                    ),
+                  ),
+                ),
+              ]),
               _mode == Constant.authLogin
-                  ? const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: LoginPage(),
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LoginPage(callback: widget.callback),
                     )
                   : const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -54,41 +127,8 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
               const SizedBox(
                 height: 10,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  child: RichText(
-                    text: TextSpan(
-                      text: _mode == Constant.authLogin
-                          ? 'Dont have an account?  '
-                          : 'Already have an account?  ',
-                      style: TextStyle(
-                        color: UpConfig.of(context).theme.baseColor[900],
-                        fontSize: 14,
-                      ),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: _mode == Constant.authLogin
-                              ? ' Signup now'
-                              : ' Login now',
-                          style: TextStyle(
-                              color: UpConfig.of(context).theme.primaryColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              _mode == Constant.authLogin
-                                  ? _gotoSignup()
-                                  : _gotoLogin();
-                            },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(
-                height: 30,
+                height: 8,
               ),
             ],
           ),

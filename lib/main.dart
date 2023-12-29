@@ -8,7 +8,7 @@ import 'environment.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
-  await Apiraiser.init(Environment.apiUrl);
+  Apiraiser.init(Environment.apiUrl);
   runApp(
     const MyApp(),
   );

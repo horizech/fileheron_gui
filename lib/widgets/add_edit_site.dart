@@ -26,6 +26,7 @@ class AddEditSiteWidget extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddEditSiteWidgetState createState() => _AddEditSiteWidgetState();
 }
 
@@ -51,6 +52,7 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
       Project project = Project(
         name: _nameTextEditingController.text,
         description: _descriptionTextEditingController.text,
+        deployed: false,
       );
       APIResult result;
 
@@ -148,7 +150,8 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
                     IconButton(
                       icon: const UpIcon(icon: Icons.content_copy),
                       onPressed: () {
-                        upCopyTextToClipboard(_descriptionTextEditingController.text);
+                        upCopyTextToClipboard(
+                            _descriptionTextEditingController.text);
                         UpToast().showToast(
                           context: context,
                           text: "Description copied!",
@@ -172,10 +175,11 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
             child: UpButton(
-              text: "Save",
+              text: "SAVE",
               onPressed: () {
                 _saveSite();
               },
+              style: UpStyle(buttonTextWeight: FontWeight.bold),
             ),
           ),
         ),

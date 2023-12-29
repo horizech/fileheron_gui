@@ -6,6 +6,7 @@ import 'package:flutter_up/dialogs/up_loading.dart';
 import 'package:flutter_up/helpers/up_toast.dart';
 import 'package:flutter_up/locator.dart';
 import 'package:flutter_up/services/up_dialog.dart';
+import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/validation/up_valdation.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_card.dart';
@@ -84,6 +85,7 @@ class _SignupPageState extends State<SignupPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: UpTextField(
+                      style: UpStyle(textfieldBorderRadius: 20),
                       validation: UpValidation(minLength: 6),
                       label: "Username",
                       onSaved: (input) => _username = input!,
@@ -92,6 +94,7 @@ class _SignupPageState extends State<SignupPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: UpTextField(
+                      style: UpStyle(textfieldBorderRadius: 20),
                       label: 'Full name',
                       validation: UpValidation(isRequired: true),
                       onSaved: (input) => _fullname = input!,
@@ -100,6 +103,7 @@ class _SignupPageState extends State<SignupPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: UpTextField(
+                      style: UpStyle(textfieldBorderRadius: 20),
                       label: 'Email',
                       validation: UpValidation(isRequired: true, isEmail: true),
                       onSaved: (input) => _email = input!,
@@ -108,6 +112,7 @@ class _SignupPageState extends State<SignupPage> {
                   Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: UpTextField(
+                        style: UpStyle(textfieldBorderRadius: 20),
                         label: 'Password',
                         validation:
                             UpValidation(isRequired: true, minLength: 6),
@@ -121,6 +126,7 @@ class _SignupPageState extends State<SignupPage> {
                         height: 42,
                         width: 160,
                         child: UpButton(
+                          style: UpStyle(buttonBorderRadius: 20),
                           text: "Signup",
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),

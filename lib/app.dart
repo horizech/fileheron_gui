@@ -1,3 +1,4 @@
+import 'package:fileheron_gui/widgets/window_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fileheron_gui/widgets/left_side.dart';
@@ -28,10 +29,14 @@ class _MyAppState extends State<MyApp> {
         )
       ],
       theme: UpThemes.generateThemeByColor(
-          // baseColor: const Color.fromARGB(255, 25, 23, 30),
-          baseColor: Colors.black,
-          isDark: true,
-          primaryColor: Colors.red.shade900),
+        // baseColor: const Color.fromARGB(255, 25, 23, 30),
+        baseColor: const Color.fromARGB(255, 47, 45, 45),
+        // baseColor: Colors.white,
+        // baseColor: Colors.black,
+        isDark: true,
+        primaryColor: const Color.fromARGB(255, 252, 225, 0),
+        // primaryColor: Colors.red.shade900,
+      ),
       title: 'FileHeron',
     );
   }
@@ -59,24 +64,49 @@ class _HomePageState extends State<HomePage> {
           width: 1,
           color: Colors.black,
           child: Container(
-            color: UpConfig.of(context).theme.baseColor,
-            child: Row(children: [
-              Padding(
-                padding: EdgeInsets.all(6),
-                child: Container(
-                  child: LeftSide(
-                    view: "",
-                    callback: callback,
+              color: UpConfig.of(context).theme.baseColor,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: WindowTitleBarBox(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: MoveWindow(),
+                          ),
+                          WindowButtons(
+                            view: "",
+                            callback: callback,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: RightSide(
-                  view: int.parse(view),
-                ),
-              ),
-            ]),
-          )),
+                  Expanded(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: LeftSide(
+                              view: int.parse(view),
+                              callback: callback,
+                            ),
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.all(6),
+                              child: Container(
+                                color: UpConfig.of(context).theme.baseColor,
+                                child: RightSide(
+                                  view: int.parse(view),
+                                  callback: callback,
+                                ),
+                              )),
+                        ]),
+                  )
+                ],
+              ))),
     );
   }
 }

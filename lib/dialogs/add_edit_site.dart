@@ -7,10 +7,10 @@ class AddEditSiteDialog extends UpBaseDialog {
   @override
   void show(BuildContext context, String completerId, {dynamic data}) {
     // if ((ServiceManager<KeyService>().currentKey)!.isNotEmpty) {
-    showDialog(
-        context: context,
-        builder: (context) => AddEditSiteWidget(
-            completerId: completerId, document: data ?? Project.empty()));
+      showDialog(
+          context: context,
+          builder: (context) => AddEditSiteWidget(
+              completerId: completerId, document: data ?? Project.empty()));
     // } else {
     //   Session.endSession(context);
     // }

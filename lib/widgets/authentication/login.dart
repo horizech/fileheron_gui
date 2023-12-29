@@ -1,5 +1,4 @@
 import 'package:apiraiser/apiraiser.dart';
-import 'package:fileheron_gui/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/helpers/up_toast.dart';
 import 'package:flutter_up/locator.dart';
@@ -13,7 +12,8 @@ import 'package:flutter_up/dialogs/up_loading.dart';
 import 'package:flutter_up/dialogs/up_info.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final Function(String)? callback;
+  const LoginPage({super.key, required this.callback});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -53,10 +53,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleLoginResult(APIResult result) {
     if (result.success) {
-      
       setState(() {
-        const HomePage();
+        widget.callback!("2");
       });
+
       UpToast().showToast(context: context, text: "Login Successfully");
     } else {
       ServiceManager<UpDialogService>().showDialog(context, UpInfoDialog(),
@@ -78,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: UpTextField(
+                    style: UpStyle(textfieldBorderRadius: 20),
                     label: 'Email',
                     controller: _emailController,
                     validation: UpValidation(isRequired: true, isEmail: true),
@@ -87,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: UpTextField(
+                    style: UpStyle(textfieldBorderRadius: 20),
                     label: "Password",
                     controller: _passwordController,
                     validation: UpValidation(isRequired: true, minLength: 6),
@@ -104,10 +106,13 @@ class _LoginPageState extends State<LoginPage> {
                       child: UpButton(
                         text: "Login",
                         style: UpStyle(
+                          buttonBorderRadius: 20,
                           isRounded: true,
                           borderRadius: 8,
                         ),
-                        onPressed: () => _login(),
+                        onPressed: () async {
+                          await _login();
+                        },
                       )),
                 ),
               ],

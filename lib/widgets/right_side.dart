@@ -1,10 +1,9 @@
 import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
 import 'package:fileheron_gui/widgets/authentication/logout.dart';
+import 'package:fileheron_gui/widgets/deployment_widget.dart';
 import 'package:fileheron_gui/widgets/project_widget.dart';
-import 'package:fileheron_gui/widgets/window_buttons.dart';
 import 'package:flutter/material.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_server/fileheron_server.dart';
 import 'package:file_picker/file_picker.dart';
@@ -21,7 +20,9 @@ import 'package:flutter_up/widgets/up_textfield.dart';
 // ignore: must_be_immutable
 class RightSide extends StatefulWidget {
   int view;
-  RightSide({Key? key, required this.view}) : super(key: key);
+  final Function(String)? callback;
+  RightSide({Key? key, required this.view, required this.callback})
+      : super(key: key);
 
   @override
   State<RightSide> createState() => _RightSideState();
@@ -109,32 +110,27 @@ class _RightSideState extends State<RightSide> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.orange, Colors.yellow],
-          stops: [0.0, 0.1],
+          colors: [
+            UpConfig.of(context).theme.baseColor,
+            UpConfig.of(context).theme.baseColor
+          ],
         ),
       ),
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: UpConfig.of(context).theme.baseColor.shade50,
+        ),
+        width: MediaQuery.of(context).size.width - 276,
         height: MediaQuery.of(context).size.height,
-        color: UpConfig.of(context).theme.baseColor,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              WindowTitleBarBox(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: MoveWindow(),
-                    ),
-                    const WindowButtons(),
-                  ],
-                ),
-              ),
               Padding(padding: const EdgeInsets.all(8.0), child: mainScreen()),
             ],
           ),
@@ -164,7 +160,10 @@ class _RightSideState extends State<RightSide> {
                     readOnly: isDisable,
                     keyboardType: TextInputType.text,
                     controller: hostController,
-                    style: UpStyle(textfieldBorderRadius: 2),
+                    style: UpStyle(
+                        textfieldBorderRadius: 8,
+                        textfieldFilledColor:
+                            UpConfig.of(context).theme.baseColor.shade100),
                     // label: "Host",
                   ),
                 ),
@@ -185,7 +184,9 @@ class _RightSideState extends State<RightSide> {
                     keyboardType: TextInputType.number,
                     controller: portController,
                     style: UpStyle(
-                      textfieldBorderRadius: 2,
+                      textfieldFilledColor:
+                          UpConfig.of(context).theme.baseColor.shade100,
+                      textfieldBorderRadius: 8,
                     ),
                     // label: "Valid port",
                   ),
@@ -204,7 +205,8 @@ class _RightSideState extends State<RightSide> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: styledTextFiled(rootController, isDisable),
+                      child:
+                          styledTextFiled(rootController, isDisable, context),
                     ),
                     const SizedBox(
                       width: 10,
@@ -213,7 +215,7 @@ class _RightSideState extends State<RightSide> {
                       width: 120,
                       child: UpButton(
                           style: UpStyle(
-                            buttonBorderRadius: 2,
+                            buttonBorderRadius: 8,
                             isDisabled: isDisable,
                           ),
                           onPressed: () async {
@@ -302,16 +304,16 @@ class _RightSideState extends State<RightSide> {
                             children: [
                               Expanded(
                                 child: styledTextFiled(
-                                    logFileController, isDisable),
+                                    logFileController, isDisable, context),
                               ),
                               const SizedBox(
                                 width: 10,
                               ),
                               SizedBox(
-                                width: 100,
+                                width: 120,
                                 child: UpButton(
                                     style: UpStyle(
-                                        buttonBorderRadius: 2,
+                                        buttonBorderRadius: 8,
                                         isDisabled: isDisable),
                                     onPressed: () async {
                                       FilePickerResult? result =
@@ -347,15 +349,17 @@ class _RightSideState extends State<RightSide> {
                             children: [
                               Expanded(
                                   child: styledTextFiled(
-                                      certificateChainController, isDisable)),
+                                      certificateChainController,
+                                      isDisable,
+                                      context)),
                               const SizedBox(
                                 width: 10,
                               ),
                               SizedBox(
-                                width: 100,
+                                width: 120,
                                 child: UpButton(
                                     style: UpStyle(
-                                        buttonBorderRadius: 2,
+                                        buttonBorderRadius: 8,
                                         isDisabled: isDisable),
                                     onPressed: () async {
                                       FilePickerResult? result =
@@ -390,16 +394,16 @@ class _RightSideState extends State<RightSide> {
                             children: [
                               Expanded(
                                 child: styledTextFiled(
-                                    serverKeyController, isDisable),
+                                    serverKeyController, isDisable, context),
                               ),
                               const SizedBox(
                                 width: 10,
                               ),
                               SizedBox(
-                                width: 100,
+                                width: 120,
                                 child: UpButton(
                                     style: UpStyle(
-                                        buttonBorderRadius: 2,
+                                        buttonBorderRadius: 8,
                                         isDisabled: isDisable),
                                     onPressed: () async {
                                       FilePickerResult? result =
@@ -434,7 +438,11 @@ class _RightSideState extends State<RightSide> {
                             height: 60,
                             child: UpTextField(
                               style: UpStyle(
-                                textfieldBorderRadius: 2,
+                                textfieldFilledColor: UpConfig.of(context)
+                                    .theme
+                                    .baseColor
+                                    .shade100,
+                                textfieldBorderRadius: 8,
                               ),
                               readOnly: isDisable,
                               keyboardType: TextInputType.text,
@@ -459,7 +467,8 @@ class _RightSideState extends State<RightSide> {
                               width: 120,
                               child: UpButton(
                                 style: UpStyle(
-                                    buttonBorderRadius: 2,
+                                    buttonHeight: 50,
+                                    buttonBorderRadius: 22,
                                     isDisabled: isDisable),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
@@ -472,8 +481,12 @@ class _RightSideState extends State<RightSide> {
                                       builder: (context) => AlertDialog(
                                         backgroundColor: UpConfig.of(context)
                                             .theme
-                                            .baseColor,
-                                        title: const UpText('Service'),
+                                            .baseColor
+                                            .shade50,
+                                        title: UpText('Service',
+                                            style: UpStyle(
+                                                textSize: 20,
+                                                textWeight: FontWeight.bold)),
                                         content: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -499,8 +512,8 @@ class _RightSideState extends State<RightSide> {
                                             width: 120,
                                             child: UpButton(
                                                 style: UpStyle(
-                                                  buttonBorderRadius: 2,
-                                                ),
+                                                    buttonTextWeight:
+                                                        FontWeight.bold),
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
@@ -518,8 +531,7 @@ class _RightSideState extends State<RightSide> {
                               width: 120,
                               child: UpButton(
                                 style: UpStyle(
-                                  buttonBorderRadius: 2,
-                                ),
+                                    buttonBorderRadius: 22, buttonHeight: 50),
                                 onPressed: () {
                                   onStop();
                                   setState(() {
@@ -528,17 +540,22 @@ class _RightSideState extends State<RightSide> {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      backgroundColor:
-                                          UpConfig.of(context).theme.baseColor,
-                                      title: const UpText('Service'),
+                                      backgroundColor: UpConfig.of(context)
+                                          .theme
+                                          .baseColor
+                                          .shade50,
+                                      title: UpText('Service',
+                                          style: UpStyle(
+                                            textSize: 20,
+                                          )),
                                       content: const UpText("Service Stoped"),
                                       actions: [
                                         SizedBox(
                                           width: 100,
                                           child: UpButton(
                                               style: UpStyle(
-                                                buttonBorderRadius: 2,
-                                              ),
+                                                  buttonTextWeight:
+                                                      FontWeight.bold),
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
@@ -559,43 +576,21 @@ class _RightSideState extends State<RightSide> {
       );
     }
     if (widget.view == 2) {
-      return const LoginSignupPage();
+      return Projects(callback: widget.callback);
+    }
+    if (widget.view == 3) {
+      return Deployment(callback: widget.callback);
     }
     if (widget.view == 4) {
-      return const Logout();
-    }
-
-    // if (widget.view == 2 && user != null && user!.roleIds != null) {
-    //   setState(() {});
-    //   return Column(
-    //     children: [
-    //       const UpText("User Logged In"),
-    //       const SizedBox(height: 8),
-    //       UpButton(
-    //         onPressed: () {
-    //           setState(() {
-    //             Apiraiser.authentication.signOut();
-    //           });
-    //         },
-    //         text: 'LOGOUT',
-    //       ),
-    //     ],
-    //   );
-    // } else {
-    //   setState(() {
-    //     const LoginSignupPage();
-    //   });
-    // }
-    if (widget.view == 3 //&& user != null && user!.roleIds != null
-        ) {
-      return const Projects();
+      return Logout(callback: widget.callback);
     } else {
-      return const LoginSignupPage();
+      return LoginSignupPage(callback: widget.callback);
     }
   }
 }
 
-Widget styledTextFiled(TextEditingController controller, bool isDisable) {
+Widget styledTextFiled(
+    TextEditingController controller, bool isDisable, context) {
   return SizedBox(
     height: 50,
     child: UpTextField(
@@ -603,7 +598,8 @@ Widget styledTextFiled(TextEditingController controller, bool isDisable) {
       keyboardType: TextInputType.text,
       controller: controller,
       style: UpStyle(
-        textfieldBorderRadius: 2,
+        textfieldFilledColor: UpConfig.of(context).theme.baseColor.shade100,
+        textfieldBorderRadius: 8,
       ),
     ),
   );

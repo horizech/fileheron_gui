@@ -8,6 +8,7 @@ class Project {
   String? lastUpdatedBy;
   String name;
   String? description;
+  bool? deployed;
 
   // final int? media;
 
@@ -19,10 +20,16 @@ class Project {
     this.createdBy,
     this.lastUpdatedOn,
     this.lastUpdatedBy,
+    this.deployed,
   });
   factory Project.empty() {
     Project project = Project(
-        id: null, name: "", description: "", createdBy: null, lastUpdatedBy: null);
+        id: null,
+        name: "",
+        description: "",
+        deployed: false,
+        createdBy: null,
+        lastUpdatedBy: null);
     return project;
   }
 
@@ -44,6 +51,7 @@ class Project {
         lastUpdatedBy: json['LastUpdatedBy'] as String?,
         name: json['Name'] as String,
         description: json['Description'] as String,
+        deployed: json['Deployed'] as bool,
       );
       // const []);
       return project;
@@ -58,6 +66,7 @@ class Project {
     data['Name'] = name;
     data['Id'] = id;
     data['Description'] = description;
+    data['Deployed'] = deployed;
 
     return data;
   }

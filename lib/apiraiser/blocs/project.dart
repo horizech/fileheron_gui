@@ -1,4 +1,5 @@
 import 'package:apiraiser/apiraiser.dart';
+// ignore: depend_on_referenced_packages
 import 'package:rxdart/subjects.dart';
 import 'package:fileheron_gui/apiraiser/models/project.dart';
 import 'package:fileheron_gui/apiraiser/repositories/project.dart';
