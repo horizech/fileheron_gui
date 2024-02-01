@@ -34,17 +34,16 @@ class Deployment extends StatefulWidget {
 
 class _DeploymentState extends State<Deployment> {
   TextEditingController projectPathController = TextEditingController();
-  TextEditingController projectNameController = TextEditingController();
   TextEditingController projectDescriptionController = TextEditingController();
   List<UpLabelValuePair> projectDropDown = [];
   bool uploadingFile = false;
   bool isZipFile = false;
-  bool isDeployed = false;
+  bool showURL = false;
   // List<Project> projectList = [];
   List<Project> project = [];
   User? user = Apiraiser.authentication.getCurrentUser();
   String dropDownValue = "";
-  String projectName = "PROJECTNAME";
+  String projectName = "projectname";
 
   checkZipFile(String filePath) {
     List<String> filepath = filePath.split(".");
@@ -119,7 +118,11 @@ class _DeploymentState extends State<Deployment> {
                                       .getDirectoryPath();
                                   if (result != null && result.isNotEmpty) {
                                     path = result;
-                                    name = result.split("\\").last.toString();
+                                    name = result
+                                        .split("\\")
+                                        .last
+                                        .toString()
+                                        .toLowerCase();
                                   }
                                 }
                               }),
@@ -140,7 +143,7 @@ class _DeploymentState extends State<Deployment> {
                                     file = result.files.first;
                                     if (file.path!.isNotEmpty) {
                                       path = file.path ?? "";
-                                      name = file.name;
+                                      name = file.name.toLowerCase();
                                     }
                                   }
                                 }
@@ -164,11 +167,11 @@ class _DeploymentState extends State<Deployment> {
                 text: "CONFIRM",
                 style: UpStyle(buttonTextWeight: FontWeight.bold),
                 onPressed: () async {
-                  // await checkZipFile(projectNameController.text);
                   Navigator.pop(context);
+                  projectPathController.text = path;
                   await deployProject(
                     projectID,
-                    name,
+                    name.toLowerCase(),
                     path,
                   );
                   setState(() {
@@ -193,30 +196,21 @@ class _DeploymentState extends State<Deployment> {
       project = (projectResult.data as List<dynamic>)
           .map((k) => Project.fromJson(k as Map<String, dynamic>))
           .first;
-      projectName = project.name;
+      projectName = project.name.toLowerCase();
       isDeployed = project.deployed ?? false;
       _loading();
+
       //Delete awss folder if already deployed project
       if (isDeployed) {
         APIResult? delDeployedProjectResult =
-            await Apiraiser.awss3.deleteByKey(projectName);
+            await Apiraiser.awss3.deleteByKey(projectName.toLowerCase());
         delDeployedProjectResult.data;
       }
-      //If Folder selected upload to awss and convert to zip to store in storage
+
+      //If Folder selected convert to zip
       if (!isZipFile) {
-        APIResult uploadResult =
-            await Apiraiser.awss3.uploadFolder(projectName, filePath);
-        uploadResult.data;
-        if (uploadResult.success) {
-          project.deployed = true;
-          APIResult? projectDeployUpdateResult = await Apiraiser.data
-              .update("Fileheron_Projects", projectID, project.toJson());
-          projectDeployUpdateResult.data;
-        } else {
-          UpToast().showToast(context: context, text: "Something went wrong");
-        }
         Directory appDocDirectory = Directory.systemTemp.absolute;
-        filePath = "${appDocDirectory.path}\\$projectName.zip";
+        filePath = "${appDocDirectory.path}\\${projectName.toLowerCase()}.zip";
         var encoder = ZipFileEncoder();
         encoder.create(filePath);
         Directory sourceDir = Directory(projectPathController.text.toString());
@@ -227,7 +221,8 @@ class _DeploymentState extends State<Deployment> {
         }
         encoder.close();
       }
-      //Upload ZipFile to storage
+
+      // //Upload ZipFile to storage
       File file = await File(filePath).create();
       await file.readAsBytes().then((Uint8List list) async {
         APIResult? storageResult = await Apiraiser.storage.upload(
@@ -243,34 +238,31 @@ class _DeploymentState extends State<Deployment> {
       await Apiraiser.data
           .insert("Fileheron_Project_Storage", storage.toJson());
 
-      //If zip file selected extract zipfile from storage to temp and
-      //temp folder to awss
-      if (isZipFile) {
-        Directory outputDirectory = Directory.systemTemp.absolute;
-        APIResult extractResult = await Apiraiser.archive.extractUsingStorage(
-            storageID,
-            outputDirectory.path,
-            OutputPathPrefix.temporaryDirectory);
-        String folderpath = extractResult.data;
-        APIResult finalResult =
-            await Apiraiser.awss3.uploadFolder(projectName, folderpath);
-        if (finalResult.success) {
-          project.deployed = true;
-          APIResult? projectDeployUpdateResult = await Apiraiser.data
-              .update("Fileheron_Projects", projectID, project.toJson());
-          projectDeployUpdateResult.data;
-        } else {
-          UpToast().showToast(context: context, text: "Something went wrong");
-        }
-        finalResult.data;
+      //extract zipfile from storage to temp
+      APIResult extractResult = await Apiraiser.archive.extractUsingStorage(
+          storageID,
+          projectName.toLowerCase(),
+          OutputPathPrefix.temporaryDirectory);
+      String folderpath = extractResult.data;
+      //Upload folder 
+      APIResult uploadFolderResult = await Apiraiser.awss3
+          .uploadFolder(projectName.toLowerCase(), folderpath);
+      if (uploadFolderResult.success) {
+        project.deployed = true;
+        APIResult? projectDeployUpdateResult = await Apiraiser.data
+            .update("Fileheron_Projects", projectID, project.toJson());
+        projectDeployUpdateResult.data;
+      } else {
+        UpToast().showToast(context: context, text: "Something went wrong");
       }
+      uploadFolderResult.data;
 
       // APIResult storageDelResult = await Apiraiser.storage.delete(storageID);
       // storageDelResult.message;
 
       reloadData();
       setState(() {
-        isDeployed = true;
+        showURL = true;
       });
       Navigator.pop(context);
       uploadingFile = false;
@@ -347,7 +339,7 @@ class _DeploymentState extends State<Deployment> {
                                       ),
                                       const SizedBox(height: 12),
                                       Visibility(
-                                          visible: isDeployed,
+                                          visible: showURL,
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -364,7 +356,7 @@ class _DeploymentState extends State<Deployment> {
                                               InkWell(
                                                 onTap: () {
                                                   upCopyTextToClipboard(
-                                                      "https://$projectName.fileheron.com");
+                                                      "https://${projectName.toLowerCase()}.fileheron.com");
                                                   UpToast().showToast(
                                                     context: context,
                                                     text: "URL copied!",
@@ -372,7 +364,7 @@ class _DeploymentState extends State<Deployment> {
                                                   );
                                                 },
                                                 child: Text(
-                                                  "https://$projectName.fileheron.com",
+                                                  "https://${projectName.toLowerCase()}.fileheron.com",
                                                   style: TextStyle(
                                                       color:
                                                           UpConfig.of(context)

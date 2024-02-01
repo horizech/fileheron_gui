@@ -88,11 +88,10 @@ class _ProjectsState extends State<Projects> {
   }
 
   _delete(project, context) async {
-    APIResult result = await Apiraiser.data
-        .delete("Fileheron_Projects", (project.id).toString());
-    result.message;
-    if (result.success) {
-      _loading();
+    _loading();
+    if (project.deployed) {
+      APIResult? delDeployedFolderResult =
+          await Apiraiser.awss3.deleteByKey(project.name.toLowerCase());
       List<QuerySearchItem> conditions = [];
       Storage projectStorage;
       conditions = [
@@ -103,11 +102,26 @@ class _ProjectsState extends State<Projects> {
       ];
       APIResult? projectStorageResult = await Apiraiser.data
           .getByConditions("Fileheron_Project_Storage", conditions);
-       
-      reloadData();
-      setState(() {});
-      Navigator.pop(context);
-    } else {}
+      if (projectStorageResult.success &&
+          projectStorageResult.message != "Nothing found!") {
+        projectStorage = (projectStorageResult.data as List<dynamic>)
+            .map((k) => Storage.fromJson(k as Map<String, dynamic>))
+            .first;
+        APIResult? delStorageResult =
+            await Apiraiser.storage.delete(projectStorage.storageID);
+        APIResult? delProjectStorageResult = await Apiraiser.data
+            .delete("Fileheron_Project_Storage", projectStorage.id ?? "");
+        delDeployedFolderResult.data;
+        delStorageResult.data;
+        delProjectStorageResult.data;
+      }
+    }
+    APIResult result = await Apiraiser.data
+        .delete("Fileheron_Projects", (project.id).toString());
+    result.message;
+    Navigator.pop(context);
+    reloadData();
+    setState(() {});
   }
 
   List<Project> _getFilteredList(List<Project> documents) {
@@ -195,7 +209,7 @@ class _ProjectsState extends State<Projects> {
                 onPressed: () async {
                   // await checkZipFile(projectNameController.text);
 
-                  await _addProject(projectNameController.text,
+                  await _addProject(projectNameController.text.toLowerCase(),
                       projectDescriptionController.text, context);
                   setState(() {
                     reloadData();
