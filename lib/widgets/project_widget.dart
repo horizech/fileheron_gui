@@ -61,8 +61,10 @@ class _ProjectsState extends State<Projects> {
         ']');
     if (projectName.length >= 4) {
       if (!projectName.contains(regExp)) {
-        Project project =
-            Project(name: projectName, description: projectDescription, deployed: false);
+        Project project = Project(
+            name: projectName,
+            description: projectDescription,
+            deployed: false);
         APIResult? result =
             await Apiraiser.data.insert("Fileheron_Projects", project.toJson());
         if (result.success) {
@@ -84,7 +86,7 @@ class _ProjectsState extends State<Projects> {
   reloadData() {
     projectBloc.getProjects();
   }
-  
+
   _delete(project, context) async {
     APIResult result = await Apiraiser.data
         .delete("Fileheron_Projects", (project.id).toString());
@@ -101,22 +103,7 @@ class _ProjectsState extends State<Projects> {
       ];
       APIResult? projectStorageResult = await Apiraiser.data
           .getByConditions("Fileheron_Project_Storage", conditions);
-      if (projectStorageResult.success &&
-          projectStorageResult.message != "Nothing found!") {
-        projectStorage = (projectStorageResult.data as List<dynamic>)
-            .map((k) => Storage.fromJson(k as Map<String, dynamic>))
-            .first;
-        APIResult result = await Apiraiser.data
-            .delete("Fileheron_Project_Storage", projectStorage.id ?? "");
-        APIResult result2 =
-            await Apiraiser.storage.delete(projectStorage.storageID);
-        // APIResult result3 = await Apiraiser.awss3.deleteByKey(project.name);
-        result.message;
-        result2.message;
-        // result3.message;
-
-        UpToast().showToast(context: context, text: result.message.toString());
-      }
+       
       reloadData();
       setState(() {});
       Navigator.pop(context);

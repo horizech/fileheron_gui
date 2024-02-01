@@ -24,7 +24,7 @@ dependencies:
   flutter_up:
     path: ../flutter_up
   # bitsdojo_window: ^0.1.5
-  # apiraiser: ^1.0.0
+  # apiraiser: ^2.0.1
   archive: ^3.1.6
   equatable: ^2.0.3
   apiraiser:

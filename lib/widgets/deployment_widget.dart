@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:apiraiser/apiraiser.dart';
+import 'package:apiraiser/src/enums/output_path_prefix.dart';
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fileheron_gui/apiraiser/blocs/project.dart';
@@ -185,17 +186,35 @@ class _DeploymentState extends State<Deployment> {
     Project project;
     bool isDeployed = false;
     checkZipFile(filePath);
-    APIResult? result =
+    APIResult? projectResult =
         await Apiraiser.data.getById("Fileheron_Projects", projectID);
-    if (result.success && result.message != "Nothing found!") {
+    if (projectResult.success && projectResult.message != "Nothing found!") {
       uploadingFile = true;
-      project = (result.data as List<dynamic>)
+      project = (projectResult.data as List<dynamic>)
           .map((k) => Project.fromJson(k as Map<String, dynamic>))
           .first;
       projectName = project.name;
       isDeployed = project.deployed ?? false;
       _loading();
+      //Delete awss folder if already deployed project
+      if (isDeployed) {
+        APIResult? delDeployedProjectResult =
+            await Apiraiser.awss3.deleteByKey(projectName);
+        delDeployedProjectResult.data;
+      }
+      //If Folder selected upload to awss and convert to zip to store in storage
       if (!isZipFile) {
+        APIResult uploadResult =
+            await Apiraiser.awss3.uploadFolder(projectName, filePath);
+        uploadResult.data;
+        if (uploadResult.success) {
+          project.deployed = true;
+          APIResult? projectDeployUpdateResult = await Apiraiser.data
+              .update("Fileheron_Projects", projectID, project.toJson());
+          projectDeployUpdateResult.data;
+        } else {
+          UpToast().showToast(context: context, text: "Something went wrong");
+        }
         Directory appDocDirectory = Directory.systemTemp.absolute;
         filePath = "${appDocDirectory.path}\\$projectName.zip";
         var encoder = ZipFileEncoder();
@@ -208,35 +227,51 @@ class _DeploymentState extends State<Deployment> {
         }
         encoder.close();
       }
+      //Upload ZipFile to storage
       File file = await File(filePath).create();
       await file.readAsBytes().then((Uint8List list) async {
-        APIResult? result = await Apiraiser.storage.upload(
+        APIResult? storageResult = await Apiraiser.storage.upload(
           StorageUploadRequest(
             file: list,
             path: filePath,
             fileName: filePath.split("\\").last.toString(),
           ),
         );
-        storageID = result?.data;
+        storageID = storageResult?.data;
       });
       var storage = Storage(projectID: projectID, storageID: storageID);
-      // if (isDeployed) {
-      //   Apiraiser.awss3.deleteByKey(projectName);
-      // }
-      // await Apiraiser.data
-      //     .insert("Fileheron_Project_Storage", storage.toJson());
-      // APIResult finalResult =
-      //     await Apiraiser.archive.extractUsingStorage(storageID, projectName);
+      await Apiraiser.data
+          .insert("Fileheron_Project_Storage", storage.toJson());
+
+      //If zip file selected extract zipfile from storage to temp and
+      //temp folder to awss
+      if (isZipFile) {
+        Directory outputDirectory = Directory.systemTemp.absolute;
+        APIResult extractResult = await Apiraiser.archive.extractUsingStorage(
+            storageID,
+            outputDirectory.path,
+            OutputPathPrefix.temporaryDirectory);
+        String folderpath = extractResult.data;
+        APIResult finalResult =
+            await Apiraiser.awss3.uploadFolder(projectName, folderpath);
+        if (finalResult.success) {
+          project.deployed = true;
+          APIResult? projectDeployUpdateResult = await Apiraiser.data
+              .update("Fileheron_Projects", projectID, project.toJson());
+          projectDeployUpdateResult.data;
+        } else {
+          UpToast().showToast(context: context, text: "Something went wrong");
+        }
+        finalResult.data;
+      }
+
       // APIResult storageDelResult = await Apiraiser.storage.delete(storageID);
       // storageDelResult.message;
-      // if (finalResult.success) {
-      //   project.deployed = true;
-      //   Apiraiser.data
-      //       .update("Fileheron_Projects", projectID, project.toJson());
-      // }
-      // finalResult.data;
+
       reloadData();
-      setState(() {});
+      setState(() {
+        isDeployed = true;
+      });
       Navigator.pop(context);
       uploadingFile = false;
     } else {
