@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
         // baseColor: Colors.black,
         isDark: true,
         primaryColor: const Color.fromARGB(255, 252, 225, 0),
-        // primaryColor: Colors.red.shade900,
+        // primaryColor: Colors.blue,
       ),
       title: 'FileHeron',
     );

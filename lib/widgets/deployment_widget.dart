@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:apiraiser/apiraiser.dart';
+// ignore: implementation_imports
 import 'package:apiraiser/src/enums/output_path_prefix.dart';
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
@@ -23,6 +23,7 @@ import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_circualar_progress.dart';
 import 'package:flutter_up/widgets/up_text.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Deployment extends StatefulWidget {
   final Function(String)? callback;
@@ -44,6 +45,7 @@ class _DeploymentState extends State<Deployment> {
   User? user = Apiraiser.authentication.getCurrentUser();
   String dropDownValue = "";
   String projectName = "projectname";
+  String selectedType = '';
 
   checkZipFile(String filePath) {
     List<String> filepath = filePath.split(".");
@@ -82,6 +84,7 @@ class _DeploymentState extends State<Deployment> {
   _deployProjectDialog(String projectID) {
     String path = "";
     String name = "";
+    FilePickerResult filePickerResult = const FilePickerResult([]);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -99,51 +102,85 @@ class _DeploymentState extends State<Deployment> {
                 children: [
                   const Padding(
                       padding: EdgeInsets.all(12),
-                      child: UpText("Add Folder or ZIP File")),
+                      child: UpText(kIsWeb
+                          ? "Files or ZIP File"
+                          : "Add Folder or ZIP File")),
                   Center(
                     child: Wrap(
                       direction: Axis.horizontal,
                       runSpacing: 8,
                       spacing: 8,
                       children: [
-                        SizedBox(
-                          width: 120,
-                          height: 40,
-                          child: UpButton(
-                              text: "Folder",
-                              style: UpStyle(buttonBorderRadius: 20),
-                              onPressed: () async {
-                                {
-                                  String? result = await FilePicker.platform
-                                      .getDirectoryPath();
-                                  if (result != null && result.isNotEmpty) {
-                                    path = result;
-                                    name = result
-                                        .split("\\")
-                                        .last
-                                        .toString()
-                                        .toLowerCase();
+                        Visibility(
+                          visible: !kIsWeb,
+                          child: SizedBox(
+                            width: 120,
+                            height: 40,
+                            child: UpButton(
+                                text: "Folder",
+                                style: UpStyle(buttonBorderRadius: 20),
+                                onPressed: () async {
+                                  {
+                                    String? result = await FilePicker.platform
+                                        .getDirectoryPath();
+                                    if (result != null && result.isNotEmpty) {
+                                      path = result;
+                                      name = result
+                                          .split("\\")
+                                          .last
+                                          .toString()
+                                          .toLowerCase();
+                                    }
                                   }
-                                }
-                              }),
+                                }),
+                          ),
+                        ),
+                        Visibility(
+                          visible: kIsWeb,
+                          child: SizedBox(
+                            width: 120,
+                            height: 40,
+                            child: UpButton(
+                                text: "Files",
+                                style: UpStyle(buttonBorderRadius: 20),
+                                onPressed: () async {
+                                  {
+                                    selectedType = "files";
+                                    FilePickerResult? result =
+                                        await FilePicker.platform.pickFiles(
+                                            withData: true,
+                                            allowMultiple: true);
+                                    filePickerResult = result!;
+                                  }
+                                }),
+                          ),
                         ),
                         SizedBox(
-                          width: 120,
+                          width: 122,
                           height: 40,
                           child: UpButton(
                               text: "ZIP File",
                               style: UpStyle(buttonBorderRadius: 20),
                               onPressed: () async {
-                                PlatformFile? file;
-                                {
-                                  FilePickerResult? result = await FilePicker
-                                      .platform
-                                      .pickFiles(allowedExtensions: [".zip"]);
-                                  if (result != null) {
-                                    file = result.files.first;
-                                    if (file.path!.isNotEmpty) {
-                                      path = file.path ?? "";
-                                      name = file.name.toLowerCase();
+                                if (kIsWeb) {
+                                  selectedType = "zip";
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                          withData: true, allowMultiple: false);
+                                  filePickerResult = result!;
+                                } else {
+                                  PlatformFile? file;
+                                  {
+                                    FilePickerResult? result =
+                                        await FilePicker.platform.pickFiles(
+                                      allowedExtensions: [".zip"],
+                                    );
+                                    if (result != null) {
+                                      file = result.files.first;
+                                      if (file.path!.isNotEmpty) {
+                                        path = file.path ?? "";
+                                        name = file.name.toLowerCase();
+                                      }
                                     }
                                   }
                                 }
@@ -169,11 +206,15 @@ class _DeploymentState extends State<Deployment> {
                 onPressed: () async {
                   Navigator.pop(context);
                   projectPathController.text = path;
-                  await deployProject(
-                    projectID,
-                    name.toLowerCase(),
-                    path,
-                  );
+                  if (kIsWeb) {
+                    await deployProjectOnWeb(projectID, filePickerResult);
+                  } else {
+                    await deployProject(
+                      projectID,
+                      name.toLowerCase(),
+                      path,
+                    );
+                  }
                   setState(() {
                     reloadData();
                   });
@@ -182,6 +223,161 @@ class _DeploymentState extends State<Deployment> {
             ],
           );
         });
+  }
+
+  // deployProjectOnWeb(String projectID, FilePickerResult result) async {
+  //   String storageID = "";
+  //   Project project;
+  //   bool isDeployed = false;
+  //   APIResult? projectResult =
+  //       await Apiraiser.data.getById("Fileheron_Projects", projectID);
+  //   if (projectResult.success && projectResult.message != "Nothing found!") {
+  //     uploadingFile = true;
+  //     project = (projectResult.data as List<dynamic>)
+  //         .map((k) => Project.fromJson(k as Map<String, dynamic>))
+  //         .first;
+  //     projectName = project.name.toLowerCase();
+  //     isDeployed = project.deployed ?? false;
+  //     _loading();
+
+  //     //Delete awss folder if already deployed project
+  //     if (isDeployed) {
+  //       APIResult? delDeployedProjectResult =
+  //           await Apiraiser.awss3.deleteByKey(projectName.toLowerCase());
+  //       delDeployedProjectResult.data;
+  //     }
+  //     List<PlatformFile> platformFiles = result.files;
+  //     PlatformFile platformFile = platformFiles.first;
+  //     Uint8List fileBytes = platformFile.bytes!;
+  //     APIResult? storageResult = await Apiraiser.storage.upload(
+  //       StorageUploadRequest(
+  //         file: fileBytes,
+  //       ),
+  //     );
+  //     storageID = storageResult?.data;
+
+  //     var storage = Storage(projectID: projectID, storageID: storageID);
+  //     await Apiraiser.data
+  //         .insert("Fileheron_Project_Storage", storage.toJson());
+
+  //     //extract zipfile from storage to temp
+  //     APIResult extractResult = await Apiraiser.archive.extractUsingStorage(
+  //         storageID,
+  //         projectName.toLowerCase(),
+  //         OutputPathPrefix.temporaryDirectory);
+  //     String folderpath = extractResult.data;
+  //     //Upload folder
+  //     APIResult uploadFolderResult = await Apiraiser.awss3
+  //         .uploadFolder(projectName.toLowerCase(), folderpath);
+  //     if (uploadFolderResult.success) {
+  //       project.deployed = true;
+  //       APIResult? projectDeployUpdateResult = await Apiraiser.data
+  //           .update("Fileheron_Projects", projectID, project.toJson());
+  //       projectDeployUpdateResult.data;
+  //     } else {
+  //       UpToast().showToast(context: context, text: "Something went wrong");
+  //     }
+  //     uploadFolderResult.data;
+
+  //     // APIResult storageDelResult = await Apiraiser.storage.delete(storageID);
+  //     // storageDelResult.message;
+
+  //     reloadData();
+  //     setState(() {
+  //       showURL = true;
+  //     });
+  //     Navigator.pop(context);
+  //     uploadingFile = false;
+  //   } else {
+  //     UpToast().showToast(context: context, text: "Project Not Found");
+  //     _deployProjectDialog("");
+  //   }
+  // }
+
+  deployProjectOnWeb(String projectID, FilePickerResult result) async {
+    String storageID = "";
+    Project project;
+    bool isDeployed = false;
+    APIResult? projectResult =
+        await Apiraiser.data.getById("Fileheron_Projects", projectID);
+    if (projectResult.success && projectResult.message != "Nothing found!") {
+      uploadingFile = true;
+      project = (projectResult.data as List<dynamic>)
+          .map((k) => Project.fromJson(k as Map<String, dynamic>))
+          .first;
+      projectName = project.name.toLowerCase();
+      isDeployed = project.deployed ?? false;
+      _loading();
+
+      //Delete awss folder if already deployed project
+      if (isDeployed) {
+        APIResult? delDeployedProjectResult =
+            await Apiraiser.awss3.deleteByKey(projectName.toLowerCase());
+        delDeployedProjectResult.data;
+      }
+      if (selectedType == "zip") {
+        List<PlatformFile> platformFiles = result.files;
+        PlatformFile platformFile = platformFiles.first;
+        Uint8List fileBytes = platformFile.bytes!;
+        APIResult? storageResult = await Apiraiser.storage.upload(
+          StorageUploadRequest(
+            file: fileBytes,
+          ),
+        );
+        storageID = storageResult?.data;
+      } else if (selectedType == "files") {
+        Archive archive = Archive();
+        for (PlatformFile platformFile in result.files) {
+          Uint8List fileBytes = platformFile.bytes!;
+          ArchiveFile archiveFile =
+              ArchiveFile(platformFile.name, fileBytes.length, fileBytes);
+          archive.addFile(archiveFile);
+        }
+        // Create a zip file from the archive
+        List<int>? zipBytes = ZipEncoder().encode(archive);
+        // Convert the zip file to a Uint8List
+        Uint8List zipUint8List = Uint8List.fromList(zipBytes!);
+        APIResult? storageResult = await Apiraiser.storage.upload(
+          StorageUploadRequest(
+            file: zipUint8List,
+          ),
+        );
+        storageID = storageResult?.data;
+      }
+
+      var storage = Storage(projectID: projectID, storageID: storageID);
+      await Apiraiser.data
+          .insert("Fileheron_Project_Storage", storage.toJson());
+
+      //extract zipfile from storage to temp
+      APIResult extractResult = await Apiraiser.archive.extractUsingStorage(
+          storageID,
+          projectName.toLowerCase(),
+          OutputPathPrefix.temporaryDirectory);
+      String folderpath = extractResult.data;
+      //Upload folder
+      APIResult uploadFolderResult = await Apiraiser.awss3
+          .uploadFolder(projectName.toLowerCase(), folderpath);
+      if (uploadFolderResult.success) {
+        project.deployed = true;
+        APIResult? projectDeployUpdateResult = await Apiraiser.data
+            .update("Fileheron_Projects", projectID, project.toJson());
+        projectDeployUpdateResult.data;
+      } else {
+        UpToast().showToast(context: context, text: "Something went wrong");
+      }
+      uploadFolderResult.data;
+
+      reloadData();
+      setState(() {
+        showURL = true;
+      });
+      Navigator.pop(context);
+      uploadingFile = false;
+    } else {
+      UpToast().showToast(context: context, text: "Project Not Found");
+      _deployProjectDialog("");
+    }
   }
 
   deployProject(String projectID, String fileName, String filePath) async {
@@ -244,7 +440,7 @@ class _DeploymentState extends State<Deployment> {
           projectName.toLowerCase(),
           OutputPathPrefix.temporaryDirectory);
       String folderpath = extractResult.data;
-      //Upload folder 
+      //Upload folder
       APIResult uploadFolderResult = await Apiraiser.awss3
           .uploadFolder(projectName.toLowerCase(), folderpath);
       if (uploadFolderResult.success) {
