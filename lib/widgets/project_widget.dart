@@ -8,6 +8,7 @@ import 'package:fileheron_gui/widgets/project_loading_widget.dart';
 import 'package:fileheron_gui/widgets/projects_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
+import 'package:flutter_up/enums/text_style.dart';
 import 'package:flutter_up/enums/up_color_type.dart';
 import 'package:flutter_up/helpers/up_console.dart';
 import 'package:flutter_up/helpers/up_toast.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_up/services/up_dialog.dart';
 import 'package:flutter_up/services/up_search.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/themes/up_themes.dart';
+import 'package:flutter_up/widgets/up_alert_dialog.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_circualar_progress.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
@@ -166,18 +168,18 @@ class _ProjectsState extends State<Projects> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: UpConfig.of(context).theme.baseColor.shade50,
-            title: UpText(
+          return UpAlertDialog(
+            title: const UpText(
               "Add Project",
-              style: UpStyle(textSize: 20, textWeight: FontWeight.bold),
+              type: UpTextType.heading6,
             ),
             content: SizedBox(
-              width: 400,
-              height: 120,
+              width: 380,
+              height: 136,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 8),
                   UpTextField(
                     label: "Project Name",
                     controller: projectNameController,
@@ -187,6 +189,7 @@ class _ProjectsState extends State<Projects> {
                     label: "Description",
                     controller: projectDescriptionController,
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -194,21 +197,14 @@ class _ProjectsState extends State<Projects> {
               UpButton(
                 colorType: UpColorType.basic,
                 text: "CANCEL",
-                style: UpStyle(
-                  buttonHoverBackgroundColor:
-                      UpConfig.of(context).theme.baseColor.shade400,
-                  buttonHoverBorderColor: Colors.transparent,
-                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               UpButton(
+                colorType: UpColorType.primary,
                 text: "CONFIRM",
-                style: UpStyle(buttonTextWeight: FontWeight.bold),
                 onPressed: () async {
-                  // await checkZipFile(projectNameController.text);
-
                   await _addProject(projectNameController.text.toLowerCase(),
                       projectDescriptionController.text, context);
                   setState(() {
@@ -243,11 +239,6 @@ class _ProjectsState extends State<Projects> {
         // width: 100,
         child: UpButton(
           colorType: UpColorType.basic,
-          style: UpStyle(
-            buttonHoverBackgroundColor:
-                UpConfig.of(context).theme.baseColor.shade400,
-            buttonHoverBorderColor: Colors.transparent,
-          ),
           text: "No",
           onPressed: () {
             Navigator.pop(context);
@@ -258,23 +249,29 @@ class _ProjectsState extends State<Projects> {
     Widget continueButton = Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        // width: 100,
         child: UpButton(
+          colorType: UpColorType.warn,
           text: "Yes",
           onPressed: () {
             Navigator.pop(context);
             _delete(model, context);
           },
-          style: UpStyle(
-              buttonBackgroundColor: UpConfig.of(context).theme.primaryColor),
         ),
       ),
     );
 
-    AlertDialog alert = AlertDialog(
-      backgroundColor: UpConfig.of(context).theme.baseColor.shade50,
-      title: const UpText("Delete Project"),
-      content: const UpText("Are you sure you want to delete?"),
+    UpAlertDialog alert = UpAlertDialog(
+      title: const UpText(
+        "Delete Project",
+        type: UpTextType.heading6,
+      ),
+      content: const Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: SizedBox(
+            height: 40,
+            width: 380,
+            child: UpText("Are you sure you want to delete your project?")),
+      ),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -301,7 +298,7 @@ class _ProjectsState extends State<Projects> {
             stream: projectBloc.stream$,
             builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(width: 500, child: ProjectLodingWidget());
+                return const SizedBox(width: 700, child: ProjectLodingWidget());
               } else {
                 return StreamBuilder(
                     stream: ServiceManager<UpSearchService>().stream$,
@@ -310,7 +307,7 @@ class _ProjectsState extends State<Projects> {
                       List<Project> filteredDocuments =
                           _getFilteredList(documents);
                       return SizedBox(
-                        width: 500,
+                        width: 700,
                         child: Form(
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,11 +317,7 @@ class _ProjectsState extends State<Projects> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 SizedBox(
-                                  // decoration: BoxDecoration(
-                                  //   borderRadius: BorderRadius.circular(8),
-                                  //   color: UpConfig.of(context).theme.baseColor,
-                                  // ),
-                                  width: 400,
+                                  width: 380,
                                   child: Padding(
                                     padding: const EdgeInsets.all(1),
                                     child: UpSearch(
@@ -362,8 +355,8 @@ class _ProjectsState extends State<Projects> {
                             ),
                             const SizedBox(height: 16),
                             SizedBox(
-                              height: 400,
-                              width: MediaQuery.of(context).size.width * 0.75,
+                              height: filteredDocuments.length * 100,
+                              width: MediaQuery.of(context).size.width,
                               child: ProjectsListWidget(
                                 list: filteredDocuments,
                                 itemClicked: (doc) =>

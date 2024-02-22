@@ -13,7 +13,10 @@ import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
 import 'package:fileheron_gui/widgets/deployment_loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
+import 'package:flutter_up/enums/text_style.dart';
+import 'package:flutter_up/enums/up_color_type.dart';
 import 'package:flutter_up/helpers/up_clipboard.dart';
+import 'package:flutter_up/widgets/up_alert_dialog.dart';
 import 'package:flutter_up/widgets/up_dropdown.dart';
 import 'package:flutter_up/helpers/up_toast.dart';
 import 'package:flutter_up/locator.dart';
@@ -88,15 +91,14 @@ class _DeploymentState extends State<Deployment> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: UpConfig.of(context).theme.baseColor.shade50,
-            title: UpText(
+          return UpAlertDialog(
+            title: const UpText(
               "Add File",
-              style: UpStyle(textSize: 20, textWeight: FontWeight.bold),
+              type: UpTextType.heading6,
             ),
             content: SizedBox(
               width: 400,
-              height: 100,
+              height: 120,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -137,72 +139,101 @@ class _DeploymentState extends State<Deployment> {
                         ),
                         Visibility(
                           visible: kIsWeb,
-                          child: SizedBox(
-                            width: 120,
-                            height: 40,
-                            child: UpButton(
-                                text: "Files",
-                                style: UpStyle(buttonBorderRadius: 20),
-                                onPressed: () async {
-                                  {
-                                    selectedType = "files";
-                                    FilePickerResult? result =
-                                        await FilePicker.platform.pickFiles(
-                                            withData: true,
-                                            allowMultiple: true);
-                                    filePickerResult = result!;
-                                  }
-                                }),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 122,
-                          height: 40,
                           child: UpButton(
-                              text: "ZIP File",
-                              style: UpStyle(buttonBorderRadius: 20),
+                              colorType: UpColorType.primary,
+                              text: "Files",
+                              style: UpStyle(
+                                  buttonBackgroundColor: UpConfig.of(context)
+                                      .theme
+                                      .primaryColor
+                                      .shade100,
+                                  buttonBorderColor: UpConfig.of(context)
+                                      .theme
+                                      .primaryColor
+                                      .shade100,
+                                  buttonHoverBackgroundColor:
+                                      UpConfig.of(context)
+                                          .theme
+                                          .primaryColor
+                                          .shade200,
+                                  buttonHoverBorderColor: UpConfig.of(context)
+                                      .theme
+                                      .primaryColor
+                                      .shade200),
                               onPressed: () async {
-                                if (kIsWeb) {
-                                  selectedType = "zip";
+                                {
+                                  selectedType = "files";
                                   FilePickerResult? result =
                                       await FilePicker.platform.pickFiles(
-                                          withData: true, allowMultiple: false);
+                                          withData: true, allowMultiple: true);
                                   filePickerResult = result!;
-                                } else {
-                                  PlatformFile? file;
-                                  {
-                                    FilePickerResult? result =
-                                        await FilePicker.platform.pickFiles(
-                                      allowedExtensions: [".zip"],
-                                    );
-                                    if (result != null) {
-                                      file = result.files.first;
-                                      if (file.path!.isNotEmpty) {
-                                        path = file.path ?? "";
-                                        name = file.name.toLowerCase();
-                                      }
-                                    }
-                                  }
                                 }
                               }),
                         ),
+                        UpButton(
+                            colorType: UpColorType.primary,
+                            text: "ZIP File",
+                            style: UpStyle(
+                                buttonBackgroundColor: UpConfig.of(context)
+                                    .theme
+                                    .primaryColor
+                                    .shade100,
+                                buttonBorderColor: UpConfig.of(context)
+                                    .theme
+                                    .primaryColor
+                                    .shade100,
+                                buttonHoverBackgroundColor: UpConfig.of(context)
+                                    .theme
+                                    .primaryColor
+                                    .shade200,
+                                buttonHoverBorderColor: UpConfig.of(context)
+                                    .theme
+                                    .primaryColor
+                                    .shade200),
+                            onPressed: () async {
+                              if (kIsWeb) {
+                                selectedType = "zip";
+                                FilePickerResult? result =
+                                    await FilePicker.platform.pickFiles(
+                                        type: FileType.image,
+                                        withData: true,
+                                        allowMultiple: false);
+                                filePickerResult = result!;
+                              } else {
+                                PlatformFile? file;
+                                {
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                    allowedExtensions: [".zip"],
+                                  );
+                                  if (result != null) {
+                                    file = result.files.first;
+                                    if (file.path!.isNotEmpty) {
+                                      path = file.path ?? "";
+                                      name = file.name.toLowerCase();
+                                    }
+                                  }
+                                }
+                              }
+                            }),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 16)
                 ],
               ),
             ),
             actions: [
               UpButton(
+                colorType: UpColorType.basic,
                 text: "CANCEL",
-                style: UpStyle(buttonTextWeight: FontWeight.bold),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               UpButton(
+                colorType: UpColorType.primary,
                 text: "CONFIRM",
-                style: UpStyle(buttonTextWeight: FontWeight.bold),
                 onPressed: () async {
                   Navigator.pop(context);
                   projectPathController.text = path;
@@ -224,75 +255,6 @@ class _DeploymentState extends State<Deployment> {
           );
         });
   }
-
-  // deployProjectOnWeb(String projectID, FilePickerResult result) async {
-  //   String storageID = "";
-  //   Project project;
-  //   bool isDeployed = false;
-  //   APIResult? projectResult =
-  //       await Apiraiser.data.getById("Fileheron_Projects", projectID);
-  //   if (projectResult.success && projectResult.message != "Nothing found!") {
-  //     uploadingFile = true;
-  //     project = (projectResult.data as List<dynamic>)
-  //         .map((k) => Project.fromJson(k as Map<String, dynamic>))
-  //         .first;
-  //     projectName = project.name.toLowerCase();
-  //     isDeployed = project.deployed ?? false;
-  //     _loading();
-
-  //     //Delete awss folder if already deployed project
-  //     if (isDeployed) {
-  //       APIResult? delDeployedProjectResult =
-  //           await Apiraiser.awss3.deleteByKey(projectName.toLowerCase());
-  //       delDeployedProjectResult.data;
-  //     }
-  //     List<PlatformFile> platformFiles = result.files;
-  //     PlatformFile platformFile = platformFiles.first;
-  //     Uint8List fileBytes = platformFile.bytes!;
-  //     APIResult? storageResult = await Apiraiser.storage.upload(
-  //       StorageUploadRequest(
-  //         file: fileBytes,
-  //       ),
-  //     );
-  //     storageID = storageResult?.data;
-
-  //     var storage = Storage(projectID: projectID, storageID: storageID);
-  //     await Apiraiser.data
-  //         .insert("Fileheron_Project_Storage", storage.toJson());
-
-  //     //extract zipfile from storage to temp
-  //     APIResult extractResult = await Apiraiser.archive.extractUsingStorage(
-  //         storageID,
-  //         projectName.toLowerCase(),
-  //         OutputPathPrefix.temporaryDirectory);
-  //     String folderpath = extractResult.data;
-  //     //Upload folder
-  //     APIResult uploadFolderResult = await Apiraiser.awss3
-  //         .uploadFolder(projectName.toLowerCase(), folderpath);
-  //     if (uploadFolderResult.success) {
-  //       project.deployed = true;
-  //       APIResult? projectDeployUpdateResult = await Apiraiser.data
-  //           .update("Fileheron_Projects", projectID, project.toJson());
-  //       projectDeployUpdateResult.data;
-  //     } else {
-  //       UpToast().showToast(context: context, text: "Something went wrong");
-  //     }
-  //     uploadFolderResult.data;
-
-  //     // APIResult storageDelResult = await Apiraiser.storage.delete(storageID);
-  //     // storageDelResult.message;
-
-  //     reloadData();
-  //     setState(() {
-  //       showURL = true;
-  //     });
-  //     Navigator.pop(context);
-  //     uploadingFile = false;
-  //   } else {
-  //     UpToast().showToast(context: context, text: "Project Not Found");
-  //     _deployProjectDialog("");
-  //   }
-  // }
 
   deployProjectOnWeb(String projectID, FilePickerResult result) async {
     String storageID = "";
@@ -484,7 +446,7 @@ class _DeploymentState extends State<Deployment> {
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SizedBox(
-                  width: 500,
+                  width: 700,
                   child: DeploymentLoadingWidget(),
                 );
               } else {
@@ -493,7 +455,7 @@ class _DeploymentState extends State<Deployment> {
                     builder: (context, searchStream) {
                       return documents.isNotEmpty
                           ? SizedBox(
-                              width: 500,
+                              width: 700,
                               child: Form(
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,12 +488,12 @@ class _DeploymentState extends State<Deployment> {
                                       child: Column(
                                     children: [
                                       UpButton(
+                                        colorType: UpColorType.primary,
                                         text: "DEPLOY",
                                         onPressed: () {
                                           _deployProjectDialog(
                                               selectedProjectID);
                                         },
-                                        style: UpStyle(buttonBorderRadius: 22),
                                       ),
                                       const SizedBox(height: 12),
                                       Visibility(

@@ -13,7 +13,7 @@ class ProjectLodingWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SizedBox(
-            width: 400,
+            width: 380,
             child: Padding(
               padding: const EdgeInsets.all(0),
               child: Shimmer.fromColors(
@@ -49,7 +49,7 @@ class ProjectLodingWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: SizedBox(
           height: 80,
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.of(context).size.width,
           child: Shimmer.fromColors(
             baseColor: UpConfig.of(context).theme.baseColor.shade100,
             highlightColor: UpConfig.of(context).theme.baseColor.shade300,
@@ -66,7 +66,7 @@ class ProjectLodingWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: SizedBox(
           height: 80,
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.of(context).size.width,
           child: Shimmer.fromColors(
             baseColor: UpConfig.of(context).theme.baseColor.shade100,
             highlightColor: UpConfig.of(context).theme.baseColor.shade300,
@@ -83,7 +83,7 @@ class ProjectLodingWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: SizedBox(
           height: 80,
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.of(context).size.width,
           child: Shimmer.fromColors(
             baseColor: UpConfig.of(context).theme.baseColor.shade100,
             highlightColor: UpConfig.of(context).theme.baseColor.shade300,
@@ -95,9 +95,6 @@ class ProjectLodingWidget extends StatelessWidget {
           ),
         ),
       ),
-      // UpCircularProgress(),
-      // SizedBox(height: 8),
-      // UpText("Loading...")
     ]);
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter_up/services/up_dialog.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/validation/up_valdation.dart';
 import 'package:flutter_up/widgets/up_button.dart';
-import 'package:flutter_up/widgets/up_card.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
 import 'package:flutter_up/dialogs/up_loading.dart';
 import 'package:flutter_up/dialogs/up_info.dart';
@@ -38,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           .login(LoginRequest(email: _email, password: _password));
       if (context.mounted) {
         ServiceManager<UpDialogService>().completeDialog(
+            // ignore: use_build_context_synchronously
             context: context,
             completerId: loadingDialogCompleterId,
             result: null);
@@ -58,6 +58,9 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       UpToast().showToast(context: context, text: "Login Successfully");
+      setState(() {
+        widget.callback!("2");
+      });
     } else {
       ServiceManager<UpDialogService>().showDialog(context, UpInfoDialog(),
           data: {'title': 'Error', 'text': result.message});
@@ -71,52 +74,50 @@ class _LoginPageState extends State<LoginPage> {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-          child: UpCard(
-            body: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: UpTextField(
-                    style: UpStyle(textfieldBorderRadius: 20),
-                    label: 'Email',
-                    controller: _emailController,
-                    validation: UpValidation(isRequired: true, isEmail: true),
-                    onSaved: (input) => _email = input ?? "",
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: UpTextField(
+                  style: UpStyle(textfieldBorderRadius: 20),
+                  label: 'Email',
+                  controller: _emailController,
+                  validation: UpValidation(isRequired: true, isEmail: true),
+                  onSaved: (input) => _email = input ?? "",
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: UpTextField(
-                    style: UpStyle(textfieldBorderRadius: 20),
-                    label: "Password",
-                    controller: _passwordController,
-                    validation: UpValidation(isRequired: true, minLength: 6),
-                    maxLines: 1,
-                    onSaved: (input) => _password = input ?? "",
-                    obscureText: true,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: UpTextField(
+                  style: UpStyle(textfieldBorderRadius: 20),
+                  label: "Password",
+                  controller: _passwordController,
+                  validation: UpValidation(isRequired: true, minLength: 6),
+                  maxLines: 1,
+                  onSaved: (input) => _password = input ?? "",
+                  obscureText: true,
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
-                  child: SizedBox(
-                      height: 42,
-                      width: 160,
-                      child: UpButton(
-                        text: "Login",
-                        style: UpStyle(
-                          buttonBorderRadius: 20,
-                          isRounded: true,
-                          borderRadius: 8,
-                        ),
-                        onPressed: () async {
-                          await _login();
-                        },
-                      )),
-                ),
-              ],
-            ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+                child: SizedBox(
+                    height: 42,
+                    width: 160,
+                    child: UpButton(
+                      text: "Login",
+                      style: UpStyle(
+                        buttonBorderRadius: 20,
+                        isRounded: true,
+                        borderRadius: 8,
+                      ),
+                      onPressed: () async {
+                        await _login();
+                      },
+                    )),
+              ),
+            ],
           ),
         ),
       ),

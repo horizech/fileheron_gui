@@ -8,14 +8,13 @@ import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_server/fileheron_server.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_up/config/up_config.dart';
+import 'package:flutter_up/enums/up_color_type.dart';
 import 'package:flutter_up/enums/up_text_direction.dart';
 import 'package:flutter_up/locator.dart';
 import 'package:flutter_up/services/up_url.dart';
 import 'package:flutter_up/themes/up_style.dart';
-import 'package:flutter_up/themes/up_themes.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_checkbox.dart';
-import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -590,35 +589,14 @@ class _RightSideState extends State<RightSide> {
                 textColor: UpConfig.of(context).theme.baseColor.shade800),
           ),
           const SizedBox(height: 22),
-          Container(
-            height: 40,
-            width: 140,
-            decoration: BoxDecoration(
-                color: UpConfig.of(context).theme.primaryColor,
-                borderRadius: BorderRadius.circular(16)),
-            child: Padding(
+          Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  UpText(
-                    "Download",
-                    style: UpStyle(
-                        textSize: 16,
-                        textColor: UpThemes.getContrastColor(
-                            UpConfig.of(context).theme.primaryColor)),
-                  ),
-                  UpIcon(
-                    icon: Icons.download,
-                    style: UpStyle(
-                        iconSize: 20,
-                        iconColor: UpThemes.getContrastColor(
-                            UpConfig.of(context).theme.primaryColor)),
-                  )
-                ],
-              ),
-            ),
-          ),
+              child: UpButton(
+                colorType: UpColorType.primary,
+                onPressed: () {},
+                text: "Download",
+                icon: Icons.download,
+              )),
         ],
       ),
     );

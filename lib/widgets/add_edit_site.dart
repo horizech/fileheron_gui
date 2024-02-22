@@ -12,6 +12,7 @@ import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/helpers/up_clipboard.dart';
 import 'package:flutter_up/helpers/up_toast.dart';
 import 'package:flutter_up/locator.dart';
+import 'package:flutter_up/widgets/up_alert_dialog.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
@@ -89,8 +90,7 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: UpConfig.of(context).theme.baseColor.shade50,
+    return UpAlertDialog(
       title: Padding(
         padding: const EdgeInsets.all(8.0),
         child: UpText(
@@ -100,9 +100,6 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
           type: UpTextType.heading6,
         ),
       ),
-      actionsPadding: const EdgeInsets.all(0),
-      titlePadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       content: SizedBox(
         width: UpLayout.isLandscape(context)
             ? MediaQuery.of(context).size.width * 0.3
@@ -173,23 +170,10 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
         SizedBox(
           // width: 100,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: UpButton(
-              text: "SAVE",
-              onPressed: () {
-                _saveSite();
-              },
-              style: UpStyle(buttonTextWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-        SizedBox(
-          // width: 100,
-          child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
             child: UpButton(
               colorType: UpColorType.basic,
-              text: "Cancel",
+              text: "CANCEL",
               style: UpStyle(
                 buttonHoverBackgroundColor:
                     UpConfig.of(context).theme.baseColor.shade400,
@@ -199,6 +183,18 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
                   context: context,
                   completerId: widget.completerId,
                   result: {'success': false}),
+            ),
+          ),
+        ),
+        SizedBox(
+          // width: 100,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+            child: UpButton(
+              text: "UPDATE",
+              onPressed: () {
+                _saveSite();
+              },
             ),
           ),
         ),

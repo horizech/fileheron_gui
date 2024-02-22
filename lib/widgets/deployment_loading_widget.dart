@@ -23,13 +23,14 @@ class DeploymentLoadingWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: SizedBox(
           height: 50,
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: 700,
           child: Shimmer.fromColors(
             baseColor: UpConfig.of(context).theme.baseColor.shade100,
             highlightColor: UpConfig.of(context).theme.baseColor.shade300,
             child: Container(
               decoration: BoxDecoration(
-                  color: UpConfig.of(context).theme.baseColor.shade100, borderRadius: BorderRadius.circular(20)),
+                  color: UpConfig.of(context).theme.baseColor.shade100,
+                  borderRadius: BorderRadius.circular(20)),
             ),
           ),
         ),
