@@ -59,7 +59,6 @@ class _LogoutState extends State<Logout> {
                   ]),
                   const SizedBox(height: 16),
                   UpButton(
-                    style: UpStyle(buttonBorderRadius: 22),
                     onPressed: () {
                       setState(() {
                         logout();

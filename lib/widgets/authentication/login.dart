@@ -103,15 +103,9 @@ class _LoginPageState extends State<LoginPage> {
                 padding:
                     const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                 child: SizedBox(
-                    height: 42,
                     width: 160,
                     child: UpButton(
                       text: "Login",
-                      style: UpStyle(
-                        buttonBorderRadius: 20,
-                        isRounded: true,
-                        borderRadius: 8,
-                      ),
                       onPressed: () async {
                         await _login();
                       },

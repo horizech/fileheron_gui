@@ -121,10 +121,8 @@ class _SignupPageState extends State<SignupPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: SizedBox(
-                      height: 42,
                       width: 160,
                       child: UpButton(
-                        style: UpStyle(buttonBorderRadius: 20),
                         text: "Signup",
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),

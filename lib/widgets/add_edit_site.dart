@@ -170,9 +170,21 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
         SizedBox(
           // width: 100,
           child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+            child: UpButton(
+              text: "UPDATE",
+              onPressed: () {
+                _saveSite();
+              },
+            ),
+          ),
+        ),
+        SizedBox(
+          // width: 100,
+          child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
             child: UpButton(
-              colorType: UpColorType.basic,
+              colorType: UpColorType.tertiary,
               text: "CANCEL",
               style: UpStyle(
                 buttonHoverBackgroundColor:
@@ -183,18 +195,6 @@ class _AddEditSiteWidgetState extends State<AddEditSiteWidget> {
                   context: context,
                   completerId: widget.completerId,
                   result: {'success': false}),
-            ),
-          ),
-        ),
-        SizedBox(
-          // width: 100,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: UpButton(
-              text: "UPDATE",
-              onPressed: () {
-                _saveSite();
-              },
             ),
           ),
         ),

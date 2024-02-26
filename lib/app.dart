@@ -66,14 +66,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<UpAppBarItem> _getUpAppBarItems() {
-    return <UpAppBarItem>[
-      UpAppBarItem(
-          title: Apiraiser.authentication.getCurrentUser() != null
-              ? Apiraiser.authentication.getCurrentUser()!.fullname
-              : "",
-          icon: Icons.person),
-      UpAppBarItem(title: "Logout", icon: Icons.power_settings_new),
-    ];
+    if (Apiraiser.authentication.getCurrentUser() != null) {
+      return <UpAppBarItem>[
+        UpAppBarItem(
+            title: Apiraiser.authentication.getCurrentUser()!.fullname,
+            icon: Icons.person),
+        UpAppBarItem(title: "Logout", icon: Icons.power_settings_new),
+      ];
+    } else {
+      return [
+        UpAppBarItem(title: "Login", icon: Icons.person),
+      ];
+    }
   }
 
   void _select(UpAppBarItem item) {
@@ -85,6 +89,17 @@ class _HomePageState extends State<HomePage> {
           _logOut();
         });
       }
+      if (_selectedItem.title == "Login") {
+        setState(() {
+          _login();
+        });
+      }
+    });
+  }
+
+  void _login() async {
+    setState(() {
+      callback("4");
     });
   }
 
@@ -157,61 +172,43 @@ class _HomePageState extends State<HomePage> {
           UpExpansionTile(
             title: "Local Server",
             children: [
-              Container(
-                color: view == "1"
-                    ? UpConfig.of(context).theme.primaryColor
-                    : Colors.transparent,
-                child: UpListTile(
-                  leading: const UpIcon(
-                    icon: Icons.home,
-                  ),
-                  title: "Local Server",
-                  onTap: () {
-                    setState(() {
-                      view = "1";
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
+              UpListTile(
+                isSelected: view == "1",
+                leadingIcon: Icons.home,
+                title: "Local Server",
+                onTap: () {
+                  setState(() {
+                    view = "1";
+                  });
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           ),
           UpExpansionTile(
             title: "FileHeron Server",
             children: [
-              Container(
-                color: view == "2"
-                    ? UpConfig.of(context).theme.primaryColor
-                    : Colors.transparent,
-                child: UpListTile(
-                  leading: const UpIcon(
-                    icon: Icons.home,
-                  ),
-                  title: "Projects",
-                  onTap: () {
-                    setState(() {
-                      view = "2";
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
+              UpListTile(
+                isSelected: view == "2",
+                leadingIcon: Icons.home,
+                title: "Projects",
+                onTap: () {
+                  setState(() {
+                    view = "2";
+                  });
+                  Navigator.of(context).pop();
+                },
               ),
-              Container(
-                color: view == "3"
-                    ? UpConfig.of(context).theme.primaryColor
-                    : Colors.transparent,
-                child: UpListTile(
-                  leading: const UpIcon(
-                    icon: Icons.home,
-                  ),
-                  title: "Deployments",
-                  onTap: () {
-                    setState(() {
-                      view = "3";
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
+              UpListTile(
+                isSelected: view == "3",
+                leadingIcon: Icons.home,
+                title: "Deployments",
+                onTap: () {
+                  setState(() {
+                    view = "3";
+                  });
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           ),

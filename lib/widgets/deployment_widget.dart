@@ -171,7 +171,6 @@ class _DeploymentState extends State<Deployment> {
                               }),
                         ),
                         UpButton(
-                            colorType: UpColorType.primary,
                             text: "ZIP File",
                             style: UpStyle(
                                 buttonBackgroundColor: UpConfig.of(context)
@@ -195,16 +194,20 @@ class _DeploymentState extends State<Deployment> {
                                 selectedType = "zip";
                                 FilePickerResult? result =
                                     await FilePicker.platform.pickFiles(
-                                        type: FileType.image,
+                                        type: FileType.custom,
+                                        allowedExtensions: ["zip"],
                                         withData: true,
                                         allowMultiple: false);
-                                filePickerResult = result!;
+                                if (result != null) {
+                                  filePickerResult = result;
+                                }
                               } else {
                                 PlatformFile? file;
                                 {
                                   FilePickerResult? result =
                                       await FilePicker.platform.pickFiles(
-                                    allowedExtensions: [".zip"],
+                                    type: FileType.custom,
+                                    allowedExtensions: ["zip"],
                                   );
                                   if (result != null) {
                                     file = result.files.first;
@@ -225,14 +228,6 @@ class _DeploymentState extends State<Deployment> {
             ),
             actions: [
               UpButton(
-                colorType: UpColorType.basic,
-                text: "CANCEL",
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              UpButton(
-                colorType: UpColorType.primary,
                 text: "CONFIRM",
                 onPressed: () async {
                   Navigator.pop(context);
@@ -249,6 +244,13 @@ class _DeploymentState extends State<Deployment> {
                   setState(() {
                     reloadData();
                   });
+                },
+              ),
+              UpButton(
+                colorType: UpColorType.tertiary,
+                text: "CANCEL",
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
             ],
@@ -488,7 +490,6 @@ class _DeploymentState extends State<Deployment> {
                                       child: Column(
                                     children: [
                                       UpButton(
-                                        colorType: UpColorType.primary,
                                         text: "DEPLOY",
                                         onPressed: () {
                                           _deployProjectDialog(

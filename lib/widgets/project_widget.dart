@@ -194,15 +194,8 @@ class _ProjectsState extends State<Projects> {
               ),
             ),
             actions: [
+              
               UpButton(
-                colorType: UpColorType.basic,
-                text: "CANCEL",
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              UpButton(
-                colorType: UpColorType.primary,
                 text: "CONFIRM",
                 onPressed: () async {
                   await _addProject(projectNameController.text.toLowerCase(),
@@ -210,6 +203,13 @@ class _ProjectsState extends State<Projects> {
                   setState(() {
                     reloadData();
                   });
+                },
+              ),
+              UpButton(
+                colorType: UpColorType.tertiary,
+                text: "CANCEL",
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
             ],
@@ -238,7 +238,7 @@ class _ProjectsState extends State<Projects> {
       child: SizedBox(
         // width: 100,
         child: UpButton(
-          colorType: UpColorType.basic,
+          colorType: UpColorType.tertiary,
           text: "No",
           onPressed: () {
             Navigator.pop(context);
@@ -276,8 +276,9 @@ class _ProjectsState extends State<Projects> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            cancelButton,
             continueButton,
+            cancelButton,
+            
           ],
         )
       ],
