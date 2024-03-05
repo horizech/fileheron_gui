@@ -9,8 +9,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:fileheron_gui/apiraiser/blocs/project.dart';
 import 'package:fileheron_gui/apiraiser/models/storage.dart';
 import 'package:fileheron_gui/apiraiser/models/project.dart';
-import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
 import 'package:fileheron_gui/widgets/deployment_loading_widget.dart';
+import 'package:fileheron_gui/widgets/fileheron_appbar.dart';
+import 'package:fileheron_gui/widgets/fileheron_navdrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/enums/text_style.dart';
@@ -25,6 +26,7 @@ import 'package:flutter_up/services/up_search.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_circualar_progress.dart';
+import 'package:flutter_up/widgets/up_scaffold.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -437,8 +439,13 @@ class _DeploymentState extends State<Deployment> {
     List<UpLabelValuePair> dropDownProject = [];
     String selectedProjectID = "";
     reloadData();
-    return user?.id != null
-        ? StreamBuilder(
+    return UpScaffold(
+      appBar: fileHeronAppBar(context, "FileHeron"),
+      drawer: fileHeronNavDrawer(context),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Center(
+          child: StreamBuilder(
             stream: projectBloc.stream$,
             builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
               List<Project> documents = snapshot.data ?? [];
@@ -570,9 +577,9 @@ class _DeploymentState extends State<Deployment> {
                     });
               }
             },
-          )
-        : LoginSignupPage(
-            callback: widget.callback,
-          );
+          ),
+        ),
+      ),
+    );
   }
 }

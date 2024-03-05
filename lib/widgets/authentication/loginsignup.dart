@@ -1,17 +1,18 @@
 import 'package:fileheron_gui/widgets/authentication/login.dart';
 import 'package:fileheron_gui/widgets/authentication/signup.dart';
+import 'package:fileheron_gui/widgets/fileheron_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/helpers/up_layout.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_card.dart';
+import 'package:flutter_up/widgets/up_scaffold.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
 import '../../constants.dart';
 
 class LoginSignupPage extends StatefulWidget {
-  final Function(String)? callback;
-  const LoginSignupPage({super.key, required this.callback});
+  const LoginSignupPage({super.key});
 
   @override
   State<LoginSignupPage> createState() => _LoginSignupPageState();
@@ -55,7 +56,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
                     decoration: BoxDecoration(
                         color: UpConfig.of(context).theme.baseColor,
                         shape: BoxShape.circle),
-                    child: Image.asset("assets/app_icon.png"),
+                    child: Image.asset("assets/file-heron-128.png"),
                   ),
                   const SizedBox(width: 8),
                   UpText(
@@ -116,9 +117,9 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
                 ),
               ]),
               _mode == Constant.authLogin
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: LoginPage(callback: widget.callback),
+                  ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: LoginPage(),
                     )
                   : const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -164,9 +165,12 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, child: getView()),
+    return UpScaffold(
+      appBar: fileHeronAppBar(context, "LOGIN"),
+      body: SizedBox(
+        child: SingleChildScrollView(
+            scrollDirection: Axis.vertical, child: getView()),
+      ),
     );
   }
 }

@@ -212,7 +212,7 @@ class _RightSideState extends State<RightSide> {
                     width: 10,
                   ),
                   SizedBox(
-                    width: 120,
+                    // width: 120,
                     child: UpButton(
                         style: UpStyle(
                           buttonBorderRadius: 8,
@@ -232,7 +232,7 @@ class _RightSideState extends State<RightSide> {
                             });
                           }
                         },
-                        text: " Select "),
+                        text: "Select"),
                   ),
                 ],
               ),
@@ -310,7 +310,7 @@ class _RightSideState extends State<RightSide> {
                               width: 10,
                             ),
                             SizedBox(
-                              width: 120,
+                              // width: 120,
                               child: UpButton(
                                   style: UpStyle(
                                       buttonBorderRadius: 8,
@@ -356,7 +356,7 @@ class _RightSideState extends State<RightSide> {
                               width: 10,
                             ),
                             SizedBox(
-                              width: 120,
+                              // width: 120,
                               child: UpButton(
                                   style: UpStyle(
                                       buttonBorderRadius: 8,
@@ -399,7 +399,7 @@ class _RightSideState extends State<RightSide> {
                               width: 10,
                             ),
                             SizedBox(
-                              width: 120,
+                              // width: 120,
                               child: UpButton(
                                   style: UpStyle(
                                       buttonBorderRadius: 8,
@@ -461,7 +461,7 @@ class _RightSideState extends State<RightSide> {
                     height: 40,
                     child: isStart == false
                         ? SizedBox(
-                            width: 120,
+                            // width: 120,
                             child: UpButton(
                               style: UpStyle(
                                   buttonHeight: 50,
@@ -505,7 +505,7 @@ class _RightSideState extends State<RightSide> {
                                       ),
                                       actions: [
                                         SizedBox(
-                                          width: 120,
+                                          // width: 120,
                                           child: UpButton(
                                               style: UpStyle(
                                                   buttonTextWeight:
@@ -524,7 +524,7 @@ class _RightSideState extends State<RightSide> {
                             ),
                           )
                         : SizedBox(
-                            width: 120,
+                            // width: 120,
                             child: UpButton(
                               style: UpStyle(
                                   buttonBorderRadius: 22, buttonHeight: 50),
@@ -619,7 +619,7 @@ class _RightSideState extends State<RightSide> {
     if (widget.view == 4) {
       return Logout(callback: widget.callback);
     } else {
-      return LoginSignupPage(callback: widget.callback);
+      return const LoginSignupPage();
     }
   }
 }

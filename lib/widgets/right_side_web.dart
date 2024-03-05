@@ -623,7 +623,7 @@ class _RightSideWebState extends State<RightSideWeb> {
     if (widget.view == 4) {
       return Logout(callback: widget.callback);
     } else {
-      return LoginSignupPage(callback: widget.callback);
+      return const LoginSignupPage();
     }
   }
 }

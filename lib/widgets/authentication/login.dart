@@ -1,8 +1,10 @@
 import 'package:apiraiser/apiraiser.dart';
+import 'package:fileheron_gui/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/helpers/up_toast.dart';
 import 'package:flutter_up/locator.dart';
 import 'package:flutter_up/services/up_dialog.dart';
+import 'package:flutter_up/services/up_navigation.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/validation/up_valdation.dart';
 import 'package:flutter_up/widgets/up_button.dart';
@@ -11,8 +13,7 @@ import 'package:flutter_up/dialogs/up_loading.dart';
 import 'package:flutter_up/dialogs/up_info.dart';
 
 class LoginPage extends StatefulWidget {
-  final Function(String)? callback;
-  const LoginPage({super.key, required this.callback});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -53,14 +54,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleLoginResult(APIResult result) {
     if (result.success) {
-      setState(() {
-        widget.callback!("2");
-      });
-
       UpToast().showToast(context: context, text: "Login Successfully");
-      setState(() {
-        widget.callback!("2");
-      });
+      ServiceManager<UpNavigationService>().navigateToNamed(Routes.home);
     } else {
       ServiceManager<UpDialogService>().showDialog(context, UpInfoDialog(),
           data: {'title': 'Error', 'text': result.message});

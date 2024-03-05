@@ -70,6 +70,6 @@ class _LogoutState extends State<Logout> {
               ),
             ),
           )
-        : LoginSignupPage(callback: widget.callback);
+        : const LoginSignupPage();
   }
 }

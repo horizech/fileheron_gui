@@ -1,5 +1,5 @@
 import 'package:apiraiser/apiraiser.dart';
-import 'package:fileheron_gui/app.dart';
+import 'package:fileheron_gui/pages/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/dialogs/up_info.dart';
 import 'package:flutter_up/dialogs/up_loading.dart';

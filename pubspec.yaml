@@ -56,7 +56,15 @@ flutter:
   assets:
     - assets/
     - assets/app_icon.png
+    - assets/app_icon_purple.png
     - assets/logo.png
+    - assets/file-heron-128.png
+    - assets/file-heron-512.png
+    - assets/add_project.png
+    - assets/homeweb_design.png
+    - assets/deploy_project.png
+    - assets/select_file.png
+    - assets/local_server.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
