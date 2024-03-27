@@ -4,6 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_windows
+  file_selector_windows
+  flutter_secure_storage_windows
+  gal
+  irondash_engine_context
+  super_native_extensions
   url_launcher_windows
 )
 
