@@ -3,7 +3,7 @@ import 'package:fileheron_gui/pages/homepage.dart';
 import 'package:fileheron_gui/widgets/authentication/login.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
 import 'package:fileheron_gui/widgets/authentication/signup.dart';
-import 'package:fileheron_gui/widgets/deployment_widget.dart';
+import 'package:fileheron_gui/pages/deployment_page.dart';
 import 'package:fileheron_gui/widgets/project_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ getRouteSettings(RouteSettings routeSettings) {
           builder: (context) => const Projects(), fullscreenDialog: true);
     case Routes.deploy:
       return MaterialPageRoute(
-          builder: (context) => const Deployment(), fullscreenDialog: true);
+          builder: (context) => const DeploymentPage(), fullscreenDialog: true);
     case Routes.about:
       return MaterialPageRoute(builder: (context) => const AboutPage());
   }

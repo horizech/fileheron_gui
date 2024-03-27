@@ -1,6 +1,9 @@
 import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_gui/services/auth.dart';
+import 'package:fileheron_gui/widgets/window_buttons.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
 import 'package:flutter_up/enums/text_style.dart';
@@ -11,7 +14,7 @@ import 'package:flutter_up/widgets/up_app_bar.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
-PreferredSizeWidget fileHeronAppBar(BuildContext context,String tittle) {
+PreferredSizeWidget fileHeronAppBar(BuildContext context, String tittle) {
   List<UpAppBarItem> getUpAppBarItems() {
     if (Apiraiser.authentication.getCurrentUser() != null) {
       return <UpAppBarItem>[
@@ -26,7 +29,6 @@ PreferredSizeWidget fileHeronAppBar(BuildContext context,String tittle) {
       ];
     }
   }
-
 
   void login() async {
     ServiceManager<UpNavigationService>().navigateToNamed(Routes.loginSignup);
@@ -88,7 +90,7 @@ PreferredSizeWidget fileHeronAppBar(BuildContext context,String tittle) {
                     icon: item.icon!,
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: UpText(item.title ?? ""),
                   )
                 ],
@@ -97,6 +99,7 @@ PreferredSizeWidget fileHeronAppBar(BuildContext context,String tittle) {
           }).toList();
         },
       ),
+      const Visibility(visible: !kIsWeb, child: WindowButtons()),
     ],
   );
 }

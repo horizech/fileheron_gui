@@ -1,7 +1,7 @@
 import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
 import 'package:fileheron_gui/widgets/authentication/logout.dart';
-import 'package:fileheron_gui/widgets/deployment_widget.dart';
+import 'package:fileheron_gui/pages/deployment_page.dart';
 import 'package:fileheron_gui/widgets/project_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fileheron_gui/constants.dart';
@@ -614,7 +614,7 @@ class _RightSideState extends State<RightSide> {
       return Projects(callback: widget.callback);
     }
     if (widget.view == 3) {
-      return Deployment(callback: widget.callback);
+      return DeploymentPage(callback: widget.callback);
     }
     if (widget.view == 4) {
       return Logout(callback: widget.callback);

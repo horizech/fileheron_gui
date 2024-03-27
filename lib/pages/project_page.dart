@@ -3,6 +3,9 @@ import 'package:fileheron_gui/apiraiser/blocs/project.dart';
 import 'package:fileheron_gui/apiraiser/models/storage.dart';
 import 'package:fileheron_gui/dialogs/add_edit_site.dart';
 import 'package:fileheron_gui/apiraiser/models/project.dart';
+import 'package:fileheron_gui/widgets/fileheron_appbar.dart';
+import 'package:fileheron_gui/widgets/fileheron_compact_navdrawer.dart';
+import 'package:fileheron_gui/widgets/fileheron_navdrawer.dart';
 import 'package:fileheron_gui/widgets/project_loading_widget.dart';
 import 'package:fileheron_gui/widgets/projects_list.dart';
 import 'package:flutter/material.dart';
@@ -21,19 +24,20 @@ import 'package:flutter_up/widgets/up_alert_dialog.dart';
 import 'package:flutter_up/widgets/up_button.dart';
 import 'package:flutter_up/widgets/up_circualar_progress.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
+import 'package:flutter_up/widgets/up_scaffold.dart';
 import 'package:flutter_up/widgets/up_search.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter_up/widgets/up_textfield.dart';
 
-class Projects extends StatefulWidget {
+class ProjectsPage extends StatefulWidget {
   final Function(String)? callback;
-  const Projects({super.key, this.callback});
+  const ProjectsPage({super.key, this.callback});
 
   @override
-  State<Projects> createState() => _ProjectsState();
+  State<ProjectsPage> createState() => _ProjectsPageState();
 }
 
-class _ProjectsState extends State<Projects> {
+class _ProjectsPageState extends State<ProjectsPage> {
   final TextEditingController _searchTextEditingController =
       TextEditingController();
   TextEditingController projectPathController = TextEditingController();
@@ -294,83 +298,102 @@ class _ProjectsState extends State<Projects> {
   @override
   Widget build(BuildContext context) {
     reloadData();
-    return StreamBuilder(
-      stream: projectBloc.stream$,
-      builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: SizedBox(width: 700, child: ProjectLodingWidget()),
-          );
-        } else {
-          return Center(
-            child: StreamBuilder(
-                stream: ServiceManager<UpSearchService>().stream$,
-                builder: (context, searchStream) {
-                  List<Project> documents = snapshot.data ?? [];
-                  List<Project> filteredDocuments = _getFilteredList(documents);
-                  return SizedBox(
-                    width: 700,
-                    child: Form(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 32),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return UpScaffold(
+      style: UpStyle(
+        scaffoldBodyColor: UpConfig.of(context).theme.baseColor,
+        scaffoldFixedDrawerWidthPercentage: 25,
+        scaffoldBodyWidthPercentage: 75,
+        scaffoldMaximumScreenWidthForCompactDrawer: 700,
+      ),
+      fixedDrawer: true,
+      appBar: fileHeronAppBar(context, "Projects"),
+      drawer: fileHeronNavDrawer(context),
+      compactDrawer: fileHeronCompactNavDrawer(context),
+      body: StreamBuilder(
+        stream: projectBloc.stream$,
+        builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: SizedBox(width: 700, child: ProjectLodingWidget()),
+            );
+          } else {
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Center(
+                child: StreamBuilder(
+                    stream: ServiceManager<UpSearchService>().stream$,
+                    builder: (context, searchStream) {
+                      List<Project> documents = snapshot.data ?? [];
+                      List<Project> filteredDocuments =
+                          _getFilteredList(documents);
+                      return SizedBox(
+                        width: 700,
+                        child: Form(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: 380,
-                              child: Padding(
-                                padding: const EdgeInsets.all(1),
-                                child: UpSearch(
-                                  controller: _searchTextEditingController,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16),
-                              child: Container(
-                                height: 45,
-                                width: 45,
-                                decoration: BoxDecoration(
-                                    color:
-                                        UpConfig.of(context).theme.primaryColor,
-                                    shape: BoxShape.circle),
-                                child: IconButton(
-                                  icon: UpIcon(
-                                    icon: Icons.add,
-                                    style: UpStyle(
-                                        iconColor: UpThemes.getContrastColor(
-                                            UpConfig.of(context)
-                                                .theme
-                                                .primaryColor)),
+                            const SizedBox(height: 32),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  width: 380,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1),
+                                    child: UpSearch(
+                                      controller: _searchTextEditingController,
+                                    ),
                                   ),
-                                  onPressed: () async {
-                                    _addProjectDialog();
-                                  },
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 16),
+                                  child: Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                        color: UpConfig.of(context)
+                                            .theme
+                                            .primaryColor,
+                                        shape: BoxShape.circle),
+                                    child: IconButton(
+                                      icon: UpIcon(
+                                        icon: Icons.add,
+                                        style: UpStyle(
+                                            iconColor:
+                                                UpThemes.getContrastColor(
+                                                    UpConfig.of(context)
+                                                        .theme
+                                                        .primaryColor)),
+                                      ),
+                                      onPressed: () async {
+                                        _addProjectDialog();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: filteredDocuments.length * 100,
+                              width: MediaQuery.of(context).size.width,
+                              child: ProjectsListWidget(
+                                list: filteredDocuments,
+                                itemClicked: (doc) =>
+                                    _openAddUpdateDialog(context, doc),
+                                onDelete: (doc) =>
+                                    _openDeleteDialog(context, doc),
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height: filteredDocuments.length * 100,
-                          width: MediaQuery.of(context).size.width,
-                          child: ProjectsListWidget(
-                            list: filteredDocuments,
-                            itemClicked: (doc) =>
-                                _openAddUpdateDialog(context, doc),
-                            onDelete: (doc) => _openDeleteDialog(context, doc),
-                          ),
-                        ),
-                      ],
-                    )),
-                  );
-                }),
-          );
-        }
-      },
+                        )),
+                      );
+                    }),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

@@ -6,12 +6,11 @@ import 'package:flutter_up/services/up_navigation.dart';
 import 'package:flutter_up/themes/up_style.dart';
 import 'package:flutter_up/widgets/up_expansion_tile.dart';
 import 'package:flutter_up/widgets/up_list_tile.dart';
-import 'package:flutter_up/widgets/up_nav_drawer.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
 Widget fileHeronNavDrawer(BuildContext context) {
   Uri uri = Uri.base;
-  return UpNavDrawer(
+  return Column(
     children: [
       getDrawerHeader(context),
       UpExpansionTile(
@@ -23,8 +22,7 @@ Widget fileHeronNavDrawer(BuildContext context) {
             title: "Local Server",
             onTap: () {
               ServiceManager<UpNavigationService>()
-                  .navigateToNamed(Routes.home);
-              Navigator.of(context).pop();
+                  .navigateToNamed(Routes.home, replace: true);
             },
           ),
         ],
@@ -34,33 +32,31 @@ Widget fileHeronNavDrawer(BuildContext context) {
         children: [
           UpListTile(
             isSelected: uri.fragment == Routes.projects,
-            leadingIcon: Icons.home,
+            leadingIcon: Icons.list,
             title: "Projects",
             onTap: () {
               ServiceManager<UpNavigationService>()
-                  .navigateToNamed(Routes.projects);
-
-              Navigator.of(context).pop();
+                  .navigateToNamed(Routes.projects, replace: true);
             },
           ),
           UpListTile(
             isSelected: uri.fragment == Routes.deploy,
-            leadingIcon: Icons.home,
+            leadingIcon: Icons.rocket_launch,
             title: "Deployments",
             onTap: () {
               ServiceManager<UpNavigationService>()
-                  .navigateToNamed(Routes.deploy);
-              Navigator.of(context).pop();
+                  .navigateToNamed(Routes.deploy, replace: true);
             },
           ),
         ],
       ),
       UpListTile(
         isSelected: uri.fragment == Routes.about,
-        leadingIcon: Icons.person,
+        leadingIcon: Icons.info,
         title: "About",
         onTap: () {
-          ServiceManager<UpNavigationService>().navigateToNamed(Routes.about);
+          ServiceManager<UpNavigationService>()
+              .navigateToNamed(Routes.about, replace: true);
         },
       ),
     ],

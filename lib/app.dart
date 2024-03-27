@@ -1,11 +1,10 @@
 import 'package:apiraiser/apiraiser.dart';
 import 'package:fileheron_gui/constants.dart';
 import 'package:fileheron_gui/pages/about.dart';
-import 'package:fileheron_gui/pages/homepage.dart';
+import 'package:fileheron_gui/pages/local_server_page.dart';
+import 'package:fileheron_gui/pages/project_page.dart';
 import 'package:fileheron_gui/widgets/authentication/loginsignup.dart';
-import 'package:fileheron_gui/widgets/deployment_widget.dart';
-import 'package:fileheron_gui/widgets/project_widget.dart';
-import 'package:flutter/foundation.dart';
+import 'package:fileheron_gui/pages/deployment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/models/up_route.dart';
 import 'package:flutter_up/models/up_router_state.dart';
@@ -37,7 +36,7 @@ class _MyAppState extends State<MyApp> {
         UpRoute(
             path: Routes.home,
             pageBuilder: (BuildContext context, UpRouterState state) =>
-                const HomePage(),
+                const LocalServerPage(),
             name: Routes.home),
         UpRoute(
             path: Routes.about,
@@ -47,12 +46,12 @@ class _MyAppState extends State<MyApp> {
         UpRoute(
             path: Routes.projects,
             pageBuilder: (BuildContext context, UpRouterState state) =>
-                const Projects(),
+                const ProjectsPage(),
             name: Routes.projects),
         UpRoute(
             path: Routes.deploy,
             pageBuilder: (BuildContext context, UpRouterState state) =>
-                const Deployment(),
+                const DeploymentPage(),
             name: Routes.deploy)
       ],
       title: 'FileHeron',

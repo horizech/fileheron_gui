@@ -21,7 +21,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   file_picker: ^5.0.1
   fileheron_server: ^1.0.4
-  flutter_up: ^4.0.0
+  flutter_up:
+    path: ../flutter_up
   archive: ^3.1.6
   equatable: ^2.0.3
   apiraiser:
@@ -30,7 +31,8 @@ dependencies:
   bitsdojo_window:
     path: ../bitsdojo_window-master/bitsdojo_window/
   shimmer: ^3.0.0
-  horizech_flutter_common: ^1.1.1
+  horizech_flutter_common:
+    path: ../horizech-flutter-common
 dev_dependencies:
   flutter_test:
     sdk: flutter

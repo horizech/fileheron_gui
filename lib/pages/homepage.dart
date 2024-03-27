@@ -57,10 +57,7 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: MoveWindow(),
                               ),
-                              WindowButtons(
-                                view: "",
-                                callback: callback,
-                              ),
+                              const WindowButtons(),
                             ],
                           ),
                         ),

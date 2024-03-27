@@ -11,6 +11,7 @@ import 'package:fileheron_gui/apiraiser/models/storage.dart';
 import 'package:fileheron_gui/apiraiser/models/project.dart';
 import 'package:fileheron_gui/widgets/deployment_loading_widget.dart';
 import 'package:fileheron_gui/widgets/fileheron_appbar.dart';
+import 'package:fileheron_gui/widgets/fileheron_compact_navdrawer.dart';
 import 'package:fileheron_gui/widgets/fileheron_navdrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_up/config/up_config.dart';
@@ -30,15 +31,16 @@ import 'package:flutter_up/widgets/up_scaffold.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class Deployment extends StatefulWidget {
+class DeploymentPage extends StatefulWidget {
   final Function(String)? callback;
-  const Deployment({super.key, this.callback});
+  const DeploymentPage({super.key, this.callback});
 
   @override
-  State<Deployment> createState() => _DeploymentState();
+  State<DeploymentPage> createState() => _DeploymentPageState();
 }
 
-class _DeploymentState extends State<Deployment> {
+class _DeploymentPageState extends State<DeploymentPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController projectPathController = TextEditingController();
   TextEditingController projectDescriptionController = TextEditingController();
   List<UpLabelValuePair> projectDropDown = [];
@@ -440,144 +442,147 @@ class _DeploymentState extends State<Deployment> {
     String selectedProjectID = "";
     reloadData();
     return UpScaffold(
-      appBar: fileHeronAppBar(context, "FileHeron"),
+      style: UpStyle(
+        scaffoldBodyColor: UpConfig.of(context).theme.baseColor,
+        scaffoldFixedDrawerWidthPercentage: 25,
+        scaffoldBodyWidthPercentage: 75,
+        scaffoldMaximumScreenWidthForCompactDrawer: 700,
+      ),
+      scaffoldKey: _scaffoldKey,
+      fixedDrawer: true,
+      appBar: fileHeronAppBar(context, "Deployment"),
       drawer: fileHeronNavDrawer(context),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Center(
-          child: StreamBuilder(
-            stream: projectBloc.stream$,
-            builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
-              List<Project> documents = snapshot.data ?? [];
-              for (var element in documents) {
-                dropDownProject.add(UpLabelValuePair(
-                    label: element.name, value: "${element.id}"));
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(
-                  width: 700,
-                  child: DeploymentLoadingWidget(),
-                );
-              } else {
-                return StreamBuilder(
-                    stream: ServiceManager<UpSearchService>().stream$,
-                    builder: (context, searchStream) {
-                      return documents.isNotEmpty
-                          ? SizedBox(
-                              width: 700,
-                              child: Form(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: UpText(
-                                      "Select a project to deploy :",
+      compactDrawer: fileHeronCompactNavDrawer(context),
+      body: Center(
+        child: StreamBuilder(
+          stream: projectBloc.stream$,
+          builder: (context, AsyncSnapshot<List<Project>?> snapshot) {
+            List<Project> documents = snapshot.data ?? [];
+            for (var element in documents) {
+              dropDownProject.add(UpLabelValuePair(
+                  label: element.name, value: "${element.id}"));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                width: 700,
+                child: DeploymentLoadingWidget(),
+              );
+            } else {
+              return StreamBuilder(
+                  stream: ServiceManager<UpSearchService>().stream$,
+                  builder: (context, searchStream) {
+                    return documents.isNotEmpty
+                        ? SizedBox(
+                            width: 700,
+                            child: Form(
+                                child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: UpText(
+                                    "Select a project to deploy :",
+                                    style: UpStyle(
+                                        textColor: UpConfig.of(context)
+                                            .theme
+                                            .baseColor
+                                            .shade800),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: UpDropDown(
+                                    style: UpStyle(dropdownBorderRadius: 20),
+                                    itemList: dropDownProject,
+                                    value: selectedProjectID,
+                                    onChanged: (value) {
+                                      selectedProjectID = value ?? "";
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Center(
+                                    child: Column(
+                                  children: [
+                                    UpButton(
+                                      text: "DEPLOY",
+                                      onPressed: () {
+                                        _deployProjectDialog(selectedProjectID);
+                                      },
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Visibility(
+                                        visible: showURL,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            UpText(
+                                              "Your Project will be deployed at ",
+                                              style: UpStyle(
+                                                  textColor:
+                                                      UpConfig.of(context)
+                                                          .theme
+                                                          .baseColor
+                                                          .shade700),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                upCopyTextToClipboard(
+                                                    "https://${projectName.toLowerCase()}.fileheron.com");
+                                                UpToast().showToast(
+                                                  context: context,
+                                                  text: "URL copied!",
+                                                  isRounded: true,
+                                                );
+                                              },
+                                              child: Text(
+                                                "https://${projectName.toLowerCase()}.fileheron.com",
+                                                style: TextStyle(
+                                                    color: UpConfig.of(context)
+                                                        .theme
+                                                        .baseColor
+                                                        .shade800,
+                                                    decoration: TextDecoration
+                                                        .underline),
+                                              ),
+                                            ),
+                                          ],
+                                        ))
+                                  ],
+                                )),
+                              ],
+                            )),
+                          )
+                        : SizedBox(
+                            child: Padding(
+                                padding: EdgeInsets.only(
+                                    top:
+                                        MediaQuery.of(context).size.height / 2 -
+                                            50,
+                                    bottom:
+                                        MediaQuery.of(context).size.height / 2 -
+                                            50),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 8),
+                                    UpText(
+                                      "First create a project.",
                                       style: UpStyle(
                                           textColor: UpConfig.of(context)
                                               .theme
                                               .baseColor
-                                              .shade800),
+                                              .shade800,
+                                          textSize: 18),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: UpDropDown(
-                                      style: UpStyle(dropdownBorderRadius: 20),
-                                      itemList: dropDownProject,
-                                      value: selectedProjectID,
-                                      onChanged: (value) {
-                                        selectedProjectID = value ?? "";
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Center(
-                                      child: Column(
-                                    children: [
-                                      UpButton(
-                                        text: "DEPLOY",
-                                        onPressed: () {
-                                          _deployProjectDialog(
-                                              selectedProjectID);
-                                        },
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Visibility(
-                                          visible: showURL,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              UpText(
-                                                "Your Project will be deployed at ",
-                                                style: UpStyle(
-                                                    textColor:
-                                                        UpConfig.of(context)
-                                                            .theme
-                                                            .baseColor
-                                                            .shade700),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  upCopyTextToClipboard(
-                                                      "https://${projectName.toLowerCase()}.fileheron.com");
-                                                  UpToast().showToast(
-                                                    context: context,
-                                                    text: "URL copied!",
-                                                    isRounded: true,
-                                                  );
-                                                },
-                                                child: Text(
-                                                  "https://${projectName.toLowerCase()}.fileheron.com",
-                                                  style: TextStyle(
-                                                      color:
-                                                          UpConfig.of(context)
-                                                              .theme
-                                                              .baseColor
-                                                              .shade800,
-                                                      decoration: TextDecoration
-                                                          .underline),
-                                                ),
-                                              ),
-                                            ],
-                                          ))
-                                    ],
-                                  )),
-                                ],
-                              )),
-                            )
-                          : SizedBox(
-                              child: Center(
-                                child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top:
-                                            MediaQuery.of(context).size.height /
-                                                    2 -
-                                                100),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(height: 8),
-                                        UpText(
-                                          "First create a project.",
-                                          style: UpStyle(
-                                              textColor: UpConfig.of(context)
-                                                  .theme
-                                                  .baseColor
-                                                  .shade800,
-                                              textSize: 18),
-                                        ),
-                                      ],
-                                    )),
-                              ),
-                            );
-                    });
-              }
-            },
-          ),
+                                  ],
+                                )),
+                          );
+                  });
+            }
+          },
         ),
       ),
     );
