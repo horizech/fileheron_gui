@@ -20,6 +20,7 @@ class LoginSignupPage extends StatefulWidget {
 
 class _LoginSignupPageState extends State<LoginSignupPage> {
   String _mode = Constant.authLogin;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   _gotoLogin() {
     setState(() {
@@ -166,7 +167,8 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
   @override
   Widget build(BuildContext context) {
     return UpScaffold(
-      appBar: fileHeronAppBar(context, "LOGIN"),
+      scaffoldKey: _scaffoldKey,
+      appBar: fileHeronAppBar(context, "LOGIN", _scaffoldKey),
       body: SizedBox(
         child: SingleChildScrollView(
             scrollDirection: Axis.vertical, child: getView()),

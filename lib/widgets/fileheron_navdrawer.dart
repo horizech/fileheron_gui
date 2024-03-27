@@ -10,56 +10,60 @@ import 'package:flutter_up/widgets/up_text.dart';
 
 Widget fileHeronNavDrawer(BuildContext context) {
   Uri uri = Uri.base;
-  return Column(
-    children: [
-      getDrawerHeader(context),
-      UpExpansionTile(
-        title: "Local Server",
-        children: [
-          UpListTile(
-            isSelected: uri.fragment == Routes.home,
-            leadingIcon: Icons.home,
-            title: "Local Server",
-            onTap: () {
-              ServiceManager<UpNavigationService>()
-                  .navigateToNamed(Routes.home, replace: true);
-            },
-          ),
-        ],
-      ),
-      UpExpansionTile(
-        title: "FileHeron Server",
-        children: [
-          UpListTile(
-            isSelected: uri.fragment == Routes.projects,
-            leadingIcon: Icons.list,
-            title: "Projects",
-            onTap: () {
-              ServiceManager<UpNavigationService>()
-                  .navigateToNamed(Routes.projects, replace: true);
-            },
-          ),
-          UpListTile(
-            isSelected: uri.fragment == Routes.deploy,
-            leadingIcon: Icons.rocket_launch,
-            title: "Deployments",
-            onTap: () {
-              ServiceManager<UpNavigationService>()
-                  .navigateToNamed(Routes.deploy, replace: true);
-            },
-          ),
-        ],
-      ),
-      UpListTile(
-        isSelected: uri.fragment == Routes.about,
-        leadingIcon: Icons.info,
-        title: "About",
-        onTap: () {
-          ServiceManager<UpNavigationService>()
-              .navigateToNamed(Routes.about, replace: true);
-        },
-      ),
-    ],
+  return Container(
+    color: Colors.white,
+    width: 300,
+    child: Column(
+      children: [
+        getDrawerHeader(context),
+        UpExpansionTile(
+          title: "Local Server",
+          children: [
+            UpListTile(
+              isSelected: uri.fragment == Routes.home,
+              leadingIcon: Icons.home,
+              title: "Local Server",
+              onTap: () {
+                ServiceManager<UpNavigationService>()
+                    .navigateToNamed(Routes.home, replace: true);
+              },
+            ),
+          ],
+        ),
+        UpExpansionTile(
+          title: "FileHeron Server",
+          children: [
+            UpListTile(
+              isSelected: uri.fragment == Routes.projects,
+              leadingIcon: Icons.list,
+              title: "Projects",
+              onTap: () {
+                ServiceManager<UpNavigationService>()
+                    .navigateToNamed(Routes.projects, replace: true);
+              },
+            ),
+            UpListTile(
+              isSelected: uri.fragment == Routes.deploy,
+              leadingIcon: Icons.rocket_launch,
+              title: "Deployments",
+              onTap: () {
+                ServiceManager<UpNavigationService>()
+                    .navigateToNamed(Routes.deploy, replace: true);
+              },
+            ),
+          ],
+        ),
+        UpListTile(
+          isSelected: uri.fragment == Routes.about,
+          leadingIcon: Icons.info,
+          title: "About",
+          onTap: () {
+            ServiceManager<UpNavigationService>()
+                .navigateToNamed(Routes.about, replace: true);
+          },
+        ),
+      ],
+    ),
   );
 }
 

@@ -100,7 +100,6 @@ class _LocalServerPageState extends State<LocalServerPage> {
   onStop() {
     if (server != null) {
       server!.stop();
-      // server!.destroy();
       setState(() {
         isStart = false;
       });
@@ -118,7 +117,7 @@ class _LocalServerPageState extends State<LocalServerPage> {
         ),
         scaffoldKey: _scaffoldKey,
         fixedDrawer: true,
-        appBar: fileHeronAppBar(context, "Local Server"),
+        appBar: fileHeronAppBar(context, "Local Server", _scaffoldKey),
         drawer: fileHeronNavDrawer(context),
         compactDrawer: fileHeronCompactNavDrawer(context),
         body: Container(

@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   String view = "1";
   callback(newView) {
     setState(() {
@@ -31,8 +32,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return UpScaffold(
+      scaffoldKey: _scaffoldKey,
       key: const Key('HOME_KEY'),
-      appBar: fileHeronAppBar(context, "FileHeron"),
+      appBar: fileHeronAppBar(context, "FileHeron", _scaffoldKey),
       drawer: fileHeronNavDrawer(context),
       body: kIsWeb
           ? Padding(

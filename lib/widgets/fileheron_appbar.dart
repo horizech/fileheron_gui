@@ -14,7 +14,8 @@ import 'package:flutter_up/widgets/up_app_bar.dart';
 import 'package:flutter_up/widgets/up_icon.dart';
 import 'package:flutter_up/widgets/up_text.dart';
 
-PreferredSizeWidget fileHeronAppBar(BuildContext context, String tittle) {
+PreferredSizeWidget fileHeronAppBar(
+    BuildContext context, String tittle, GlobalKey<ScaffoldState> key) {
   List<UpAppBarItem> getUpAppBarItems() {
     if (Apiraiser.authentication.getCurrentUser() != null) {
       return <UpAppBarItem>[
@@ -51,6 +52,7 @@ PreferredSizeWidget fileHeronAppBar(BuildContext context, String tittle) {
   }
 
   return UpAppBar(
+    scaffoldKey: key,
     titleWidget: Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [

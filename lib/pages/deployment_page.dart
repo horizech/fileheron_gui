@@ -450,7 +450,7 @@ class _DeploymentPageState extends State<DeploymentPage> {
       ),
       scaffoldKey: _scaffoldKey,
       fixedDrawer: true,
-      appBar: fileHeronAppBar(context, "Deployment"),
+      appBar: fileHeronAppBar(context, "Deployment", _scaffoldKey),
       drawer: fileHeronNavDrawer(context),
       compactDrawer: fileHeronCompactNavDrawer(context),
       body: Center(

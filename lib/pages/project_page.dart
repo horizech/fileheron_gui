@@ -50,6 +50,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   List<Project> project = [];
   User? user = Apiraiser.authentication.getCurrentUser();
   String dropDownValue = "";
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   checkZipFile(String filePath) {
     List<String> filepath = filePath.split(".");
@@ -299,6 +300,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Widget build(BuildContext context) {
     reloadData();
     return UpScaffold(
+      scaffoldKey: _scaffoldKey,
       style: UpStyle(
         scaffoldBodyColor: UpConfig.of(context).theme.baseColor,
         scaffoldFixedDrawerWidthPercentage: 25,
@@ -306,7 +308,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         scaffoldMaximumScreenWidthForCompactDrawer: 700,
       ),
       fixedDrawer: true,
-      appBar: fileHeronAppBar(context, "Projects"),
+      appBar: fileHeronAppBar(context, "Projects", _scaffoldKey),
       drawer: fileHeronNavDrawer(context),
       compactDrawer: fileHeronCompactNavDrawer(context),
       body: StreamBuilder(
